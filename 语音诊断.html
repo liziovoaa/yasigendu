@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>语音诊断 · 跟读神器</title>
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;padding:26px 30px 60px;font:14px/1.7 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif;
+       background:#f6f8fb;color:#1f2532;}
+  h1{font-size:19px;margin:0 0 4px;letter-spacing:.3px;}
+  .sub{color:#7d8798;font-size:12.5px;margin-bottom:20px;}
+  button{border:0;border-radius:9px;padding:12px 26px;font-size:15px;font-weight:700;cursor:pointer;
+         background:#2f6fed;color:#fff;box-shadow:0 2px 8px rgba(47,111,237,.25);}
+  button:disabled{background:#b9c3d4;box-shadow:none;cursor:default;}
+  button.ghost{background:#fff;color:#2f6fed;border:1px solid #cfdcf5;box-shadow:none;margin-left:10px;}
+  #out{margin-top:22px;background:#fff;border:1px solid #e3e9f3;border-radius:12px;padding:6px 0;
+       box-shadow:0 1px 3px rgba(20,30,60,.04);}
+  .row{display:flex;gap:12px;padding:9px 18px;border-bottom:1px solid #f0f3f9;align-items:flex-start;}
+  .row:last-child{border-bottom:0;}
+  .k{flex:0 0 172px;color:#6b7688;font-size:13px;}
+  .v{flex:1;font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:13px;word-break:break-all;}
+  .ok{color:#1a8b4a;font-weight:700;}
+  .bad{color:#cc2f3d;font-weight:700;}
+  .warn{color:#b4761a;font-weight:700;}
+  .dim{color:#93a0b4;}
+  .hint{margin-top:20px;background:#fffaf0;border:1px solid #f2e2c0;border-radius:12px;padding:14px 18px;
+        font-size:13px;color:#6b5330;line-height:1.8;}
+  .hint b{color:#a4621a;}
+  ol{margin:8px 0 0 -12px;}
+  code{background:#eef2f9;border-radius:4px;padding:1px 5px;font-size:12.5px;}
+</style>
+</head>
+<body>
+<h1>语音诊断</h1>
+<div class="sub">这个页面只做检测，不上传任何数据。点下面按钮，把结果念给我。</div>
+
+<button id="go">开始诊断</button>
+<button class="ghost" id="copy">复制结果</button>
+
+<div id="out"></div>
+
+<div class="hint">
+  <b>怎么用：</b>双击本文件（用 Edge 打开）→ 点「开始诊断」→ 等 6 秒左右 → 点「复制结果」粘给我。<br>
+  <b>如果「朗读测试」全部显示没开始</b>，那说明是系统层面没声音，不是这个网页的问题。<br>
+  <b>注意：</b>如果你是在某个软件自带的预览窗口里打开的，请改用 Edge / Chrome 直接打开文件再测一次。
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const out = $('#out');
+
+function row(k, v, cls){
+  const d = document.createElement('div');
+  d.className = 'row';
+  const a = document.createElement('div'); a.className = 'k'; a.textContent = k;
+  const b = document.createElement('div'); b.className = 'v' + (cls ? ' ' + cls : ''); b.innerHTML = v;
+  d.appendChild(a); d.appendChild(b); out.appendChild(d);
+  return b;
+}
+const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+let report = [];
+function rec(k, v){ report.push(k + ': ' + String(v).replace(/<[^>]+>/g, '')); }
+
+async function diagnose(){
+  out.innerHTML = ''; report = [];
+  const ua = navigator.userAgent || '';
+  const isEdge = /Edg\//.test(ua);
+  const isChrome = /Chrome\//.test(ua) && !isEdge;
+  const isSafari = /^((?!chrome|android|crios|edg|fxios).)*safari/i.test(ua);
+  const inIframe = (() => { try { return window.self !== window.top; } catch(e){ return true; } })();
+
+  row('打开方式', (inIframe
+      ? '<span class="bad">在嵌套窗口里（预览面板 / iframe）</span>'
+      : '<span class="ok">独立窗口</span>')
+      + (location.protocol === 'file:' ? ' · file://' : ' · ' + location.protocol));
+  rec('打开方式', (inIframe ? 'iframe（预览面板）' : '独立窗口') + ' / ' + location.protocol);
+
+  const browser = isEdge ? 'Edge' : (isChrome ? 'Chrome' : (isSafari ? 'Safari' : '其它'));
+  row('浏览器', esc(browser + ' · ' + (ua.match(/(?:Edg|Chrome|Firefox|Version)\/[\d.]+/) || ['?'])[0]));
+  rec('浏览器', browser);
+
+  const hasApi = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+  row('语音接口', hasApi ? '<span class="ok">可用</span>' : '<span class="bad">浏览器不支持</span>', '');
+  rec('语音接口', hasApi ? '可用' : '不支持');
+  if (!hasApi) return finish();
+
+  // 等音色列表（某些浏览器要等 onvoiceschanged）
+  let all = speechSynthesis.getVoices() || [];
+  const vrow = row('音色列表', all.length ? all.length + ' 个' : '<span class="dim">加载中…</span>');
+  for (let k = 0; k < 30 && !all.length; k++){
+    await sleep(120);
+    all = speechSynthesis.getVoices() || [];
+  }
+  vrow.textContent = all.length ? all.length + ' 个' : '0 个（取不到）';
+  const en = all.filter(v => /^en/i.test(v.lang || ''));
+  const us = all.filter(v => /^en[-_]us/i.test(v.lang || ''));
+  row('音色总数', all.length + ' 个（英语 ' + en.length + ' 个 / 美式 ' + us.length + ' 个）');
+  rec('音色总数', all.length + ' 英语' + en.length + ' 美式' + us.length);
+
+  if (!all.length){
+    conclude('<span class="bad">浏览器一个音色都没拿到</span> —— ' +
+      '如果这是刚打开页面第一次点，稍等 1 秒再点「再测一次」（音色列表是异步加载的）。' +
+      '仍然为 0 就换 Edge 打开；还不行说明系统缺英语语音包。');
+    $('#go').disabled = false; $('#go').textContent = '再测一次';
+    return;
+  }
+
+  // 关键分水岭：本地音色能离线出声，在线音色要连微软服务器
+  const localEn = en.filter(v => !/online|natural|neural/i.test(v.name || ''));
+  const onlineEn = en.filter(v => /online|natural|neural/i.test(v.name || ''));
+  let localVerdict;
+  if (!localEn.length){
+    localVerdict = '<span class="bad">0 个（全部是在线音色）</span> —— 所有声音都依赖微软服务器，' +
+      '网络不稳或服务器连不上就完全没声，而且没有任何备用音色。' +
+      '<b>建议装一个离线英语语音包</b>：Windows 设置 → 时间和语言 → 语言和区域 → 添加语言 → 英语(美国) → ' +
+      '勾选「语音」→ 安装。装完刷新本页，会多出 Microsoft Zira / David Desktop。';
+  } else {
+    localVerdict = '<span class="ok">' + localEn.length + ' 个（离线可用）</span> —— 即使在线的连不上，也能用本地音色出声。';
+  }
+  row('本地音色 / 在线音色', localEn.length + ' 个 / ' + onlineEn.length + ' 个<br>' + localVerdict, '');
+  rec('本地音色', localEn.length + ' 个: ' + localEn.map(v => v.name).join(', '));
+  rec('在线音色', onlineEn.length + ' 个');
+
+  const names = en.slice(0, 10).map(v => v.name).join(' ｜ ');
+  row('英语音色（前 10）', esc(names || '无'), en.length ? '' : 'bad');
+
+  // 候选：优先本地音色；没有本地就试两个在线音色
+  const pickLocal = localEn[0] || null;
+  const candidates = [];
+  if (pickLocal) candidates.push({ tag: '本地音色', v: pickLocal });
+  // 没有本地音色就多试两个在线音色（不同音色走不同节点，结果可能不同）
+  onlineEn.slice(0, pickLocal ? 1 : 2).forEach((v, i, arr) => {
+    candidates.push({ tag: arr.length > 1 ? '在线音色 #' + (i + 1) : '在线音色', v });
+  });
+  if (!candidates.length) candidates.push({ tag: '唯一音色', v: en[0] });
+
+  for (const c of candidates){
+    const res = await testSpeak(c.v);
+    const cls = res.state === 'ended' ? 'ok' : (res.state === 'started' ? 'warn' : 'bad');
+    row('朗读测试 · ' + c.tag,
+        '<span class="' + cls + '">' + res.state + '</span>' + ' · ' + esc(c.v.name) +
+        (res.err ? ' · 错误 ' + esc(res.err) : '') +
+        (res.ms ? ' · 耗时 ' + res.ms + 'ms' : ''),
+        '');
+    rec('朗读测试 ' + c.tag, res.state + ' / ' + c.v.name + (res.err ? ' / ' + res.err : ''));
+  }
+
+  row('语音队列状态',
+      'pending=' + speechSynthesis.pending + ' · speaking=' + speechSynthesis.speaking + ' · paused=' + speechSynthesis.paused);
+  rec('队列', 'pending=' + speechSynthesis.pending + ' speaking=' + speechSynthesis.speaking + ' paused=' + speechSynthesis.paused);
+
+  finish();
+}
+
+// 返回 {state:'ended'|'started'|'no-start'|'error', ms, err}
+function testSpeak(voice){
+  return new Promise(resolve => {
+    const t0 = Date.now();
+    let started = false, settled = false;
+    const done = (state, err) => {
+      if (settled) return; settled = true;
+      resolve({ state, ms: Date.now() - t0, err });
+    };
+    try {
+      speechSynthesis.cancel();
+    } catch(e){}
+    // cancel 之后必须让出主线程，否则取消动作会把接下来的 speak 一起吞掉
+    setTimeout(() => {
+      let u;
+      try {
+        u = new SpeechSynthesisUtterance('This is a test. Hello, this is a test.');
+        u.voice = voice;
+        u.lang = voice.lang || 'en-US';
+        u.rate = 1; u.pitch = 1; u.volume = 1;
+        u.onstart = () => { started = true; };
+        u.onend = () => done('ended');
+        u.onerror = e => done(started ? 'started' : 'error', (e && e.error) || 'unknown');
+        speechSynthesis.speak(u);
+      } catch(e){
+        done('error', 'speak 抛错: ' + e.message);
+        return;
+      }
+      // 3.2 秒还没开始 = 基本判定不出声
+      setTimeout(() => { if (!started) done('no-start'); }, 3200);
+      // 开始过但一直没结束（卡住）
+      setTimeout(() => { if (started) done('started'); }, 6000);
+    }, 120);
+  });
+}
+
+function conclude(html){
+  const old = document.getElementById('verdictRow');
+  if (old) old.remove();
+  const b = row('结论', html, '');
+  if (b && b.parentNode) b.parentNode.id = 'verdictRow';
+  rec('结论', String(html).replace(/<[^>]+>/g, ''));
+}
+
+function finish(){
+  const s = speechSynthesis;
+  let verdict;
+  const startedCount = report.filter(x => x.indexOf('朗读测试') === 0 && /ended|started/.test(x)).length;
+  if (!startedCount){
+    verdict = '<span class="bad">所有音色都发不出声</span> —— 问题在系统或浏览器层。' +
+      '先确认系统音量、右下角音量合成器里浏览器没被静音；再试 Chrome；还不行就是系统缺语音包。';
+  } else {
+    verdict = '<span class="ok">至少有一个音色能正常出声</span> —— 那么在跟读神器里把「音色」换成列表中不带 Online / Natural 字样的那个（例如 Microsoft Zira / David），就能出声。';
+  }
+  conclude(verdict);
+  $('#go').disabled = false;
+  $('#go').textContent = '再测一次';
+}
+
+$('#go').onclick = async () => {
+  $('#go').disabled = true;
+  $('#go').textContent = '诊断中…';
+  try { await diagnose(); }
+  catch(e){ row('异常', '<span class="bad">' + esc(e.message) + '</span>'); $('#go').disabled = false; }
+};
+
+$('#copy').onclick = async () => {
+  const txt = report.join('\n') || '（还没诊断）';
+  try { await navigator.clipboard.writeText(txt); $('#copy').textContent = '已复制'; }
+  catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = txt; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); $('#copy').textContent = '已复制'; } catch(e2){ $('#copy').textContent = '复制失败，请手动选'; }
+    ta.remove();
+  }
+  setTimeout(() => { $('#copy').textContent = '复制结果'; }, 1600);
+};
+</script>
+</body>
+</html>

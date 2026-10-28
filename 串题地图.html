@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>雅思口语串题地图 · 2026年9-12月</title>
+<style>
+  *{box-sizing:border-box;}
+  [hidden]{display:none!important;}
+  body{
+    margin:0;padding:0;
+    font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;
+    background:#f5f6f8;color:#1a1d24;font-size:14px;
+  }
+  .topbar{position:sticky;top:0;z-index:20;}
+  header{
+    background:#fff;border-bottom:1px solid #e3e6ec;
+    padding:14px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  }
+  header h1{font-size:17px;margin:0;font-weight:600;letter-spacing:.2px;}
+  header .sub{font-size:12px;color:#7a8090;}
+  .head-stat{
+    margin-left:auto;font-size:12px;color:#5a6070;
+    background:#f2f4f8;padding:5px 11px;border-radius:5px;
+    display:flex;gap:10px;align-items:center;
+  }
+  .head-stat b{color:#2f6df6;font-weight:600;}
+  .head-stat i{color:#e08a1e;font-style:normal;font-weight:600;}
+  .head-stat em{color:#8a8f9c;font-style:normal;}
+
+  .bar{
+    background:#fafbfd;border-bottom:1px solid #eceff4;
+    padding:10px 22px;display:flex;gap:9px;align-items:center;flex-wrap:wrap;
+  }
+  button{
+    font-family:inherit;font-size:12.5px;cursor:pointer;
+    border:1px solid #d4d9e2;background:#fff;color:#39404e;
+    padding:6px 13px;border-radius:5px;transition:.15s;white-space:nowrap;
+  }
+  button:hover{background:#f0f2f6;border-color:#c3cad6;}
+  button.on{background:#2f6df6;border-color:#2f6df6;color:#fff;}
+  button.mini{padding:4px 10px;font-size:12px;}
+  input#q{
+    flex:1;min-width:180px;max-width:340px;font-family:inherit;
+    font-size:13px;padding:7px 12px;border:1px solid #d4d9e2;border-radius:5px;
+    outline:none;background:#fff;
+  }
+  input#q:focus{border-color:#2f6df6;box-shadow:0 0 0 3px rgba(47,109,246,.1);}
+  .spacer{margin-left:auto;}
+
+  main{padding:20px 22px 60px;max-width:1280px;margin:0 auto;}
+
+  .grp{
+    background:#fff;border:1px solid #e3e6ec;border-radius:9px;
+    margin-bottom:16px;overflow:hidden;
+  }
+  .grp-hd{
+    display:flex;align-items:flex-start;gap:13px;
+    padding:15px 18px;cursor:pointer;user-select:none;
+    border-bottom:1px solid transparent;
+  }
+  .grp-hd:hover{background:#fafbfd;}
+  .grp.open .grp-hd{border-bottom-color:#eceff4;background:#fafbfd;}
+  .badge{
+    flex:0 0 auto;min-width:46px;height:26px;padding:0 8px;
+    display:inline-flex;align-items:center;justify-content:center;
+    border-radius:5px;font-size:12.5px;font-weight:700;letter-spacing:.3px;
+    background:#e8effe;color:#2f6df6;border:1px solid #cfe0fd;
+  }
+  .grp.cluster .badge{background:#fdf2e2;color:#d4811a;border-color:#f4e0c4;}
+  .grp.solo .badge{background:#eff1f5;color:#7a8090;border-color:#e2e5ec;}
+  .grp-tt{min-width:0;flex:1;}
+  .grp-tt h2{margin:0 0 3px;font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .grp-tt h2 .cnt{
+    font-size:11.5px;font-weight:500;color:#7a8090;
+    background:#f2f4f8;padding:2px 7px;border-radius:4px;
+  }
+  .grp-tt p{margin:0;font-size:12.5px;color:#6b7280;line-height:1.65;}
+  .grp-tt p b{color:#39404e;font-weight:600;}
+  .caret{color:#9aa0ae;font-size:12px;margin-top:3px;transition:.2s;flex:0 0 auto;}
+  .grp.open .caret{transform:rotate(90deg);}
+  .grp-bd{display:none;padding:6px 0 10px;}
+  .grp.open .grp-bd{display:block;}
+
+  .card{
+    display:flex;gap:12px;padding:9px 18px 9px 20px;
+    border-bottom:1px dashed #f0f2f6;align-items:flex-start;
+  }
+  .card:last-child{border-bottom:0;}
+  .card:hover{background:#fbfcfe;}
+  .c-name{
+    flex:0 0 176px;font-size:13.5px;font-weight:600;line-height:1.5;
+    color:#22262e;
+  }
+  .c-name a{color:inherit;text-decoration:none;border-bottom:1px dotted #c8d0dc;}
+  .c-name a:hover{color:#2f6df6;border-bottom-color:#2f6df6;}
+  .c-side{
+    flex:0 0 92px;font-size:11.5px;color:#2f6df6;
+    background:#f2f6fe;border-radius:4px;padding:2px 7px;
+    display:inline-block;line-height:1.5;margin-top:1px;
+    text-align:center;
+  }
+  .c-fix{flex:1;font-size:13px;color:#4a505e;line-height:1.7;min-width:0;}
+  .c-fix b{color:#1a1d24;font-weight:600;}
+  .c-fix .hl{background:#fff5e0;padding:0 2px;border-radius:2px;}
+
+  .solo-list{
+    display:grid;grid-template-columns:1fr 1fr;gap:0 22px;
+    padding:4px 18px 12px;
+  }
+  .solo-item{
+    display:flex;gap:9px;padding:6px 0;border-bottom:1px dashed #f0f2f6;
+    font-size:13px;align-items:baseline;
+  }
+  .solo-item:nth-last-child(1),.solo-item:nth-last-child(2){border-bottom:0;}
+  .solo-item .n{flex:0 0 20px;color:#b0b6c2;font-size:11.5px;}
+  .solo-item .t{flex:0 0 auto;font-weight:600;color:#22262e;}
+  .solo-item .h{flex:1;color:#7a8090;font-size:12px;line-height:1.55;}
+
+  .empty{padding:40px;text-align:center;color:#9aa0ae;font-size:13px;}
+  .foot{
+    max-width:1280px;margin:0 auto;padding:0 22px 50px;
+    font-size:12px;color:#9aa0ae;line-height:1.8;
+  }
+  .foot b{color:#6b7280;}
+
+  @media (max-width:860px){
+    .card{flex-wrap:wrap;gap:6px;}
+    .c-name{flex:1 1 100%;}
+    .c-side{flex:0 0 auto;}
+    .c-fix{flex:1 1 100%;}
+    .solo-list{grid-template-columns:1fr;}
+    .solo-item:nth-last-child(2){border-bottom:1px dashed #f0f2f6;}
+  }
+
+  @media print{
+    @page{margin:10mm 9mm;}
+    body{background:#fff;font-size:9pt;}
+    header{position:static;padding:0 0 5px;border-bottom:1.5px solid #333;}
+    header h1{font-size:12.5pt;}
+    header .sub{font-size:7.5pt;}
+    .head-stat{font-size:7.5pt;padding:2px 7px;background:#f2f4f8;}
+    .bar,.caret,.foot .screen-only{display:none!important;}
+    main{
+      padding:5px 0 0;max-width:none;
+      column-count:2;column-gap:7mm;column-rule:1px solid #e0e0e0;
+    }
+    .grp{
+      break-inside:avoid-column;border:0;margin:0 0 7px;
+      border-radius:0;background:#fff;display:block;
+    }
+    .grp-hd{padding:2px 0;break-after:avoid;background:#fff!important;border:0;}
+    .grp-bd{display:block!important;padding:0;}
+    .badge{min-width:24px;height:15px;font-size:7pt;padding:0 4px;border-radius:2px;border:0;}
+    .grp-tt h2{font-size:9.5pt;margin:0 0 1px;}
+    .grp-tt h2 .cnt{font-size:7pt;padding:0 3px;}
+    .grp-tt p{font-size:7pt;line-height:1.42;color:#444;}
+    .card{
+      display:flex;flex-wrap:wrap;gap:0 5px;
+      padding:1.6px 0;break-inside:avoid;border-bottom:0;
+    }
+    .c-name{flex:0 0 auto;font-size:8.2pt;line-height:1.4;}
+    .c-side{flex:0 0 auto;font-size:6.5pt;background:#eef2fa;padding:0 3px;border-radius:2px;margin:0;}
+    .c-fix{flex:1 1 100%;font-size:7.4pt;line-height:1.42;color:#333;}
+    .solo-list{display:block;padding:0;}
+    .solo-item{display:block;font-size:7.6pt;padding:1.6px 0;border-bottom:0;}
+    .solo-item .n{display:inline;font-size:6.5pt;margin-right:3px;}
+    .solo-item .t{display:inline;margin-right:4px;}
+    .solo-item .h{display:inline;font-size:6.8pt;line-height:1.4;}
+    .foot{
+      max-width:none;padding:5px 0 0;border-top:1px solid #bbb;
+      font-size:6.8pt;line-height:1.45;break-inside:avoid;column-span:all;
+    }
+    a{text-decoration:none;color:#000;}
+    .c-name a{border:0;}
+    .c-fix b{color:#000;}
+    .c-fix .hl{background:none;padding:0;}
+  }
+</style>
+</head>
+<body>
+<div class="topbar">
+<header>
+  <h1>雅思口语串题地图</h1>
+  <span class="sub">2026 年 9–12 月题库 · 63 张 P2 卡 · 一材多用</span>
+  <div class="head-stat">
+    <span><b id="stCore">7</b> 个核心素材</span>
+    <span><i id="stCluster">3</i> 组框架复用</span>
+    <span><em id="stSolo">21</em> 张单点</span>
+  </div>
+</header>
+
+<div class="bar">
+  <input id="q" type="search" placeholder="搜卡名 / 素材 / 关键词，如「礼物」「相机」">
+  <button class="mini on" data-f="all">全部</button>
+  <button class="mini" data-f="core">核心素材</button>
+  <button class="mini" data-f="cluster">框架复用</button>
+  <button class="mini" data-f="solo">单点</button>
+  <button class="mini" id="btnExpand">全部展开</button>
+  <span class="spacer"></span>
+  <button class="mini" id="btnPrint">打印 / 存 PDF</button>
+</div>
+</div>
+
+<main id="main"></main>
+
+<div class="foot">
+  <p><b>怎么用这张表。</b>考前不要一张张卡去背，按「素材」背：先记住那行骨架（谁、什么事、几个细节），再看下面那一竖排的卡——同一段话换三个开头就能打七八道题。每张卡右边写的「改造点」，就是这道题跟骨架不一样的那一句话。</p>
+  <p><b>蓝色 = 整段复用</b>，换的是开头和落点；<b>橙色 = 框架复用</b>，论述结构能照搬，例子要换；<b>灰色 = 单点</b>，这些卡没有可借的素材，必须单独准备，但往往一个具体细节就够撑满两分钟。</p>
+  <p class="screen-only"><b>点卡名可以直接跳到跟读神器</b>播放这一题的参考答案（两个文件要在同一个文件夹，并且用同一个方式打开——都双击，或者都通过「启动本地服务」打开）。</p>
+</div>
+
+<script>
+/* ===== 数据 =====
+   type: core 整段复用 / cluster 框架复用 / solo 单点
+   side: 这张卡借用素材的哪个侧面（短标签）
+   fix : 改造点——这张题跟骨架不一样的那一句话
+*/
+const DATA = [
+{type:'core', id:'M2', name:'教学十年', sub:'我 + 学生 + 同事，一条职业线全装在里面',
+ skeleton:'私校教了四年数学 → 只想做一对一 → 辞职单干 → 留六个月存款 → 一年后学生排满。这条线上还站着：<b>学生小周</b>（40 分追到 110）、<b>学生一涵</b>（想学医）、<b>同事黄老师</b>（人人都找他）、<b>郊区教学点</b>（商场三楼，路上两小时）。',
+ cards:[
+  {cn:'对结果开心的重要决定', side:'离职单干', fix:'开头第一句就把决定说出来，别铺垫。中段写<b>犹豫</b>——父母觉得我疯了、我留了六个月存款，这才是 7 分需要的"风险评估"。结尾落在<b>掌控感</b>（能按自己的方式教），不是钱。'},
+  {cn:'重要决定', side:'入行选择', fix:'和上一张同源，但重心从"结果开心"平移到<b>怎么做决定</b>：给了自己一年期限、算了存款够撑几个月。同一套语料换重心即可，不用另背。'},
+  {cn:'做困难事情并成功的人', side:'学生小周', fix:'主角必须是学生，你退成观察者。加分点在结尾：<b>他不再把"难"当成"我不行"的证据</b>——认知转变比分数好看。'},
+  {cn:'不喜欢的短途旅行', side:'郊区教学点', fix:'把每周去郊区上课说成一次"被迫的短途"。吐槽点具体化：<b>地铁换公交两个多小时</b>，到了商场还得上三楼，教室没窗。'},
+  {cn:'去过的无聊地方', side:'郊区商场', fix:'同一个郊区场景，重心从"行程"换成"空间"：三层楼二十分钟走完，一半店铺关着，唯一有人的是奶茶店。'},
+  {cn:'受欢迎的人', side:'同事黄老师', fix:'受欢迎的原因要落到<b>具体行为</b>——他替人代课从不推、有新老师来他先请吃饭。别写成"他人很好"，那是 5 分的说法。'},
+  {cn:'听不感兴趣的话', side:'同事讲车', fix:'题目问的是"你怎么应付"。给一套<b>礼貌脱身的三段式</b>：点头附和 → 找个具体问题把话头递回去 → 借口下节课。'},
+  {cn:'想从事医疗行业的人', side:'学生一涵', fix:'从"我教过的学生"切进去。落点必须是<b>一个瞬间</b>——她去医院看完奶奶回来，说想搞清楚医生那些话是什么意思。'},
+  {cn:'在团队中工作', side:'重编课程', fix:'人称要从"我"改成"我们"。冲突写<b>谁都不愿改自己那章</b>，最后靠分工和试讲解决，不是靠说服。'},
+  {cn:'很久没收到回复的信息', side:'求职邮件', fix:'教学圈的求职邮件，重点是<b>等待期的自我怀疑</b>——反复刷邮箱、把已发送读了三遍。结尾给个反转：后来发现进了垃圾箱。'},
+  {cn:'长久目标 /抱负', side:'自己的工作室', fix:'这是<b>将来时</b>题。把已经发生的事往后推：现在一个人带十几个学生，三年内想有个小工作室，招两个老师，我只做教研。'},
+  {cn:'改变重要想法', side:'对天赋的看法', fix:'观点题，用经历当证据：以前我相信数学靠天赋，见过小周之后改口——<b>天赋决定起点，习惯决定走多远</b>。'},
+  {cn:'节约时间的方法 /改变', side:'批量备课', fix:'必须给<b>可复述的做法 + 前后对比</b>：讲义做成模板、一次排一周的课、同一类题只讲一次。以前备一节课四十分钟，现在十五分钟。'}
+ ]},
+
+{type:'core', id:'M9', name:'设计师小林', sub:'一个朋友，五张卡',
+ skeleton:'大学同学，做平面设计，<b>用纸质日记本</b>，周日晚规划整周（吃饭、截稿、健身），规矩是"离开房间必须收一样东西"。她拍胶片，只拍老居民楼。',
+ cards:[
+  {cn:'有条理的人', side:'主体', fix:'靠<b>三个能被记住的细节</b>撑住：纸日记本（不是 App）、周日晚规划、离开房间收一样东西。别只说她"很自律"。'},
+  {cn:'喜欢拍照的人', side:'胶片小林', fix:'重点不是器材，是<b>她拍什么</b>：只拍九十年代的老居民楼，为一张照片在一个路口等一下午，一年拍不完两卷。'},
+  {cn:'有创造力的朋友', side:'同一个人', fix:'创造力必须举例：客户只说了一句"要显得有文化"，她做出整套<b>旧报纸排版的视觉</b>。别用"很有想法"这种空话。'},
+  {cn:'和朋友度过的愉快夜晚', side:'火锅夜', fix:'重心放在<b>时间感</b>：吃到店里只剩我们一桌，老板在旁边收拾椅子，我们还在聊。具体的时间细节比"很开心"值钱。'},
+  {cn:'送朋友的礼物', side:'送小林', fix:'礼物要跟人设咬合：送过她<b>一支好钢笔和一本手工装订的空白册子</b>，因为她所有东西都手写。'}
+ ]},
+
+{type:'core', id:'M5', name:'爷爷', sub:'一个长辈，四张卡',
+ skeleton:'八十多岁，以前是木匠，现在还在院子里修凳子，<b>一边修一边哼老歌</b>。跟谁都能聊，记得住菜贩和邻居的名字。他做木工活儿不收钱，谁家凳子坏了拿去就行。',
+ cards:[
+  {cn:'快乐人士', side:'主体', fix:'全篇的记忆点就是<b>他哼歌</b>——坐在那儿修凳子哼老调子，你就知道他心里舒坦。这个细节出现两次，答案就立住了。'},
+  {cn:'小时候学到的新技能', side:'爷爷教象棋', fix:'技能要具体到可验证：他教我开局先走马、别急着吃子。结尾说<b>现在还在下</b>，闭环。'},
+  {cn:'学习并喜欢历史的人', side:'读史的爷爷', fix:'他读史的方式比"他爱历史"值钱：<b>只看人物传记，边看边骂</b>，说书上写的不一定对，他小时候见过的不是这样。'},
+  {cn:'尊敬的比你年长的人', side:'同一个人', fix:'把"尊敬"的理由从"他是长辈"换成<b>一个价值观</b>：他这辈子从不跟人比，钱不多也从没想要更多。'}
+ ]},
+
+{type:'core', id:'M3', name:'成都 · 西安', sub:'一次西南旅行，四张卡',
+ skeleton:'两年前去成都：<b>公园茶馆坐了三小时</b>（有人掏耳朵、有人打牌）、吃了两次火锅（第一次吃得很糟）、一早去看熊猫。后来去西安，城墙没走完。评价轴是同一个词：<b>慢</b>。',
+ cards:[
+  {cn:'推荐旅行过的地方', side:'成都', fix:'结尾必须给一条<b>警告</b>：别夏天去，盆地没风，闷得难受，秋天最好。这个"劝退"是记忆点，也显得真去过。'},
+  {cn:'想再去一次的城市', side:'西安', fix:'和成都共用一个"慢"的评价轴，但钩子要换：<b>城墙只走了三分之一、碑林没进去</b>，所以还想再去。'},
+  {cn:'有趣视频', side:'成都面馆', fix:'视频的形式本身就是亮点：<b>没有配乐、没有解说</b>，只有街上的声音。老板一句"外面全变了，我这碗面没变"直接引用。'},
+  {cn:'近期改变的计划', side:'日本行改期', fix:'改计划的原因要<b>外部化</b>——四月樱花季的行程，因为接了为期两周的班课只能挪到秋天，不能写成"我自己改主意了"。'}
+ ]},
+
+{type:'core', id:'M6', name:'上海这座城市', sub:'火车站 + 滨江 + 老小区，三张卡',
+ skeleton:'春运第一天的<b>上海火车站</b>：两千人、行李箱、每三十秒一次广播、手推车哐当、小孩在哭。二十年的<b>滨江公园</b>：一边是楼一边是江。<b>老楼装电梯</b>：六楼和一楼吵了两年。',
+ cards:[
+  {cn:'嘈杂地', side:'火车站春运', fix:'结构就是<b>噪音是叠出来的</b>：一段写广播、一段写人声、一段写轮子在地砖上的声音。分层写，比"特别吵"高一档。'},
+  {cn:'喜欢的城市自然之地', side:'滨江公园', fix:'立意在一句对照：<b>往一头看是楼，往另一头看只有江和天</b>。在这座城市里这种地方很少，所以值得去。'},
+  {cn:'当地新闻', side:'老楼装电梯', fix:'政策类新闻要写<b>两种立场</b>：六楼老人三年没下过楼，一楼说挡光还吵。最后是分层出钱解决的——别只讲好处。'}
+ ]},
+
+{type:'core', id:'M7', name:'那台相机', sub:'一次攒钱 + 一次事故，三张卡',
+ skeleton:'攒了八个月买一台二手微单，<b>每月固定转一笔进另一个账户</b>、戒了上班路上的咖啡、卖掉不用的游戏机。拿到手那天还有点心疼。后来硬盘坏了，丢了两年的照片。',
+ cards:[
+  {cn:'攒钱买特别物品', side:'买相机', fix:'钱要<b>算得清</b>：每月转固定金额、戒咖啡、卖游戏机——三笔来源比"我省吃俭用"可信十倍。'},
+  {cn:'不会用的科技产品', side:'同一台相机', fix:'"不会用"要说到具体按钮：<b>光圈优先怎么调、RAW 是什么</b>，买了半年一直用自动挡。'},
+  {cn:'遇到的科技问题', side:'硬盘损坏', fix:'技术问题少讲原理，多讲<b>我的反应</b>：插上去没反应、跑了三家店都说没救、两小时没说话。结尾给补救动作。'}
+ ]},
+
+{type:'core', id:'M4', name:'跑友老魏', sub:'一个人 + 一种习惯，三张卡',
+ skeleton:'同事，跑过好几个马拉松。他教我的其实不是跑步，是<b>慢下来</b>——慢到还能说话。每周两次，早上六点，跑了三个月。一年后我跑完半马。他本人十一点睡六点起，自己做飯，每周固定休一天。',
+ cards:[
+  {cn:'教你新技能的人', side:'主体', fix:'核心是<b>反常识</b>：他教我的不是怎么跑快，是怎么跑慢。判断标准也很妙——"能回答我的话就说明没跑太快"。'},
+  {cn:'有健康习惯和作息的人', side:'同一个人', fix:'从"技能"切到"生活方式"，列<b>三条规矩</b>：十一点睡、自己做饭、每周故意休一天。强调他从不劝别人。'},
+  {cn:'早起经历', side:'晨跑', fix:'别写"我很困"。写<b>六点的城市长什么样</b>：路面是湿的、清洁工在扫、只有早餐店亮着灯。'}
+ ]},
+
+/* ===== 框架复用：结构照搬，例子换掉 ===== */
+{type:'cluster', id:'法', name:'立法三张', sub:'同一套论证链，换三个例子',
+ skeleton:'立法题的骨架永远是四步：<b>现在的毛病是什么 → 我要立什么 → 怎么执行（谁来查、罚多少）→ 阻力在哪（小店成本、就业、执行成本）</b>。举例不同，骨架不变。',
+ cards:[
+  {cn:'想颁布的新法律', side:'限制短视频', fix:'例子用<b>未成年人的推荐算法</b>：晚十点后不推、默认关闭自动连播。执行落在"应用商店强制"上，阻力是平台收入。'},
+  {cn:'保护环境的法律', side:'垃圾分类', fix:'这是<b>已有法律</b>，时态改成完成时，重心从"预期效果"换成"实际效果"：分了但混装拉走，问题在执行不在立法。'},
+  {cn:'想要颁布的环保法律', side:'限一次性塑料', fix:'理由要落到<b>一个具体画面</b>——外卖盒堆在楼道；执行给出可操作的一条：商家不主动提供，需要就要付钱。'}
+ ]},
+
+{type:'cluster', id:'建', name:'建筑两张', sub:'一套评价轴：好看不好用',
+ skeleton:'建筑题的通用轴：<b>外行看形（高、怪、像什么）→ 内行看用（动线、采光、有没有人待着）→ 落在一个反差上</b>。',
+ cards:[
+  {cn:'喜欢或不喜欢的高建筑', side:'上海中心', fix:'写"不喜欢"更好写：外形像拧过的毛巾，但<b>上去之后最有意思的是一楼大厅</b>，不是观景台。反差即分数。'},
+  {cn:'喜欢的公共建筑', side:'市图书馆', fix:'同一套轴反过来用：外面平平无奇，<b>里面每一层都坐满了人</b>——好建筑的证明是有人愿意待着。'}
+ ]},
+
+{type:'cluster', id:'机', name:'手机成瘾两张', sub:'一个问题，一个解法',
+ skeleton:'同一件事的两面：<b>刷短视频为什么停不下来</b>（自动连播、没有结尾、每次下滑都给一点新东西）；<b>我怎么改的</b>（十一点后手机放客厅充电，床头放纸质书）。',
+ cards:[
+  {cn:'浪费时间的活动', side:'刷短视频', fix:'分析<b>机制</b>而不是骂它：没有"看完"这个点，所以永远停不下来；两小时过去什么都没记住。'},
+  {cn:'近期改变', side:'十一点后不看手机', fix:'同一件事的解法篇，重点写<b>头三天有多难受</b>，以及第一个礼拜睡得怎么样。别写成励志故事。'}
+ ]},
+
+/* ===== 单点：必须单独准备 ===== */
+{type:'solo', id:'单', name:'单点卡清单', sub:'没有可借的素材，一张一个钩子', solo:[
+  {cn:'看过的名人采访', m:'余华访谈', h:'四十多分钟，讲当牙医那几年和退稿信，好笑得出乎意料。'},
+  {cn:'好的购物服务', m:'修表店', h:'老师傅不推销，只说"这表不值得修"，收了二十块。'},
+  {cn:'擅长做手工的人', m:'邻居木匠', h:'不用一根钉子做小凳子，榫卯对不齐就重来。'},
+  {cn:'拥挤地方', m:'外滩跨年', h:'人是被推着走的，脚不用自己迈；散场走了四十分钟才出路口。'},
+  {cn:'不喜欢的电影', m:'超级英雄片', h:'第三幕永远是天空里打，城市被砸烂却没人受伤——这才是我不喜欢的原因。'},
+  {cn:'钦佩的运动员', m:'苏炳添', h:'三十二岁改起跑脚，跑出 9 秒 83。佩服的是改动作的勇气。'},
+  {cn:'印象深刻的聚会', m:'表哥婚礼', h:'乡下流水席，六百块一桌，全村人来帮忙，比酒店婚礼记得住。'},
+  {cn:'读起来开心的书', m:'《人类简史》', h:'第一章就说"小麦驯化了人类"，那一下被说服了。'},
+  {cn:'帮助他人', m:'地铁站', h:'帮一个不会用手机买票的老人买票，他非要给我钱。'},
+  {cn:'喜欢在家 /花园种菜的人', m:'母亲阳台', h:'六个花盆种小葱和辣椒，收成不值钱，但她每天早起先去看。'},
+  {cn:'发小', m:'邻居陶', h:'从小学同桌到工作还在一个城市，二十年没红过脸。'},
+  {cn:'拥有成功商业的人', m:'面包店', h:'一家只做四款面包的店，每天卖完就关门，开了十一年。'},
+  {cn:'喜欢的现场体育赛事', m:'足球赛', h:'进球那一刻整个看台一起站起来，那一下在家里看电视永远不会有。'},
+  {cn:'特别场合的食物', m:'饺子', h:'全家一起包，形状一年比一年难看，但只有过年吃。'},
+  {cn:'擅长学习和说语言的人', m:'朋友 Anna', h:'从不用单词书，靠看剧跟读，四年三门语言。方法比天赋重要。'},
+  {cn:'名人出演的广告', m:'运动品牌', h:'运动员演普通人早起跑步，没有台词，最后一句字幕。'},
+  {cn:'喜欢拜访但不想住的家', m:'乡下老屋', h:'夏天舒服，晚上安静得睡不着，最近的药店开车二十分钟。'},
+  {cn:'包含动物的故事或书', m:'《夏洛的网》', h:'一只蜘蛛用织字救一头猪，小时候看故事，长大看的是告别。'},
+  {cn:'印象深刻的课程', m:'教师培训', h:'讲师让我们互相讲一道题，才发现自己"懂了"和"能讲"是两件事。'},
+  {cn:'一见且想继续了解的人', m:'火车上的测绘员', h:'一路在画地图，说他去过的地方都没有名字。'},
+  {cn:'公共场所丢物品', m:'地铁丢手机', h:'三站之后才发现，回头找已经没了。补卡、改密码花了一整天。'}
+ ]}
+];
+
+/* ===== 渲染 ===== */
+const mainEl = document.getElementById('main');
+const qEl = document.getElementById('q');
+const linkOf = cn => 'yasigendu.html#t=' + encodeURIComponent(cn);
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function hit(text, kw){ return !kw || String(text).replace(/<[^>]+>/g,'').toLowerCase().indexOf(kw) >= 0; }
+
+function typeMeta(t){
+  return t === 'core'   ? {cls:'core',    label:'素材'}
+       : t === 'cluster'? {cls:'cluster', label:'框架'}
+       :                  {cls:'solo',    label:'单点'};
+}
+
+function makeGroup(g, kw){
+  const meta = typeMeta(g.type);
+  const box = document.createElement('div');
+  box.className = 'grp ' + meta.cls + ' open';
+
+  const isSolo = g.type === 'solo';
+  const list = isSolo ? g.solo : g.cards;
+  const matched = kw
+    ? list.filter(it => hit(it.cn, kw) || hit(it.m || '', kw) || hit(it.h || '', kw) || hit(it.side || '', kw) || hit(it.fix || '', kw))
+    : list;
+  const groupHit = kw && (hit(g.name, kw) || hit(g.sub || '', kw) || hit(g.skeleton || '', kw));
+  const items = groupHit ? list : matched;
+  if (!items.length) return null;
+
+  const total = list.length;
+  const cntTxt = (kw && items.length !== total)
+    ? '命中 ' + items.length + ' / 共 ' + total
+    : (isSolo ? total + ' 张' : total + ' 张卡');
+
+  const hd = document.createElement('div');
+  hd.className = 'grp-hd';
+  hd.innerHTML =
+    '<span class="badge">' + esc(g.id) + '</span>' +
+    '<div class="grp-tt">' +
+      '<h2>' + esc(g.name) + '<span class="cnt">' + cntTxt + '</span></h2>' +
+      '<p>' + esc(g.sub) + (g.skeleton ? '　' + g.skeleton : '') + '</p>' +
+    '</div>' +
+    '<span class="caret">▶</span>';
+  hd.onclick = () => box.classList.toggle('open');
+  box.appendChild(hd);
+
+  const bd = document.createElement('div');
+  bd.className = 'grp-bd';
+
+  if (isSolo){
+    const grid = document.createElement('div');
+    grid.className = 'solo-list';
+    items.forEach((it, i) => {
+      const row = document.createElement('div');
+      row.className = 'solo-item';
+      row.innerHTML =
+        '<span class="n">' + (i + 1) + '</span>' +
+        '<span class="t"><a href="' + linkOf(it.cn) + '">' + esc(it.cn) + '</a></span>' +
+        '<span class="h">' + esc(it.m) + ' · ' + esc(it.h) + '</span>';
+      grid.appendChild(row);
+    });
+    bd.appendChild(grid);
+  } else {
+    items.forEach(it => {
+      const row = document.createElement('div');
+      row.className = 'card';
+      row.innerHTML =
+        '<div class="c-name"><a href="' + linkOf(it.cn) + '">' + esc(it.cn) + '</a></div>' +
+        '<div><span class="c-side">' + esc(it.side) + '</span></div>' +
+        '<div class="c-fix">' + it.fix + '</div>';
+      bd.appendChild(row);
+    });
+  }
+  box.appendChild(bd);
+  return box;
+}
+
+let curFilter = 'all';
+
+/* 支持 ?f=solo / ?f=core / ?f=cluster 直接打开某一类 */
+(function initFilter(){
+  const f = new URLSearchParams(location.search).get('f');
+  if (f && ['core','cluster','solo'].includes(f)){
+    curFilter = f;
+    document.querySelectorAll('.bar button[data-f]').forEach(b => {
+      b.classList.toggle('on', b.dataset.f === f);
+    });
+  }
+})();
+
+function render(){
+  const kw = (qEl.value || '').trim().toLowerCase();
+  mainEl.innerHTML = '';
+  let groups = 0, cards = 0;
+  DATA.forEach(g => {
+    if (curFilter !== 'all' && g.type !== curFilter) return;
+    const node = makeGroup(g, kw);
+    if (node){
+      mainEl.appendChild(node);
+      groups++;
+      cards += (g.type === 'solo' ? g.solo.length : g.cards.length);
+    }
+  });
+  if (!groups){
+    const d = document.createElement('div');
+    d.className = 'empty';
+    d.textContent = kw ? '没搜到「' + kw + '」，换个词试试（卡名、素材名都能搜）' : '这个分类暂时是空的';
+    mainEl.appendChild(d);
+  }
+  return cards;
+}
+
+/* 顶部数字按真实数据算，不写死 */
+function refreshStat(){
+  const core = DATA.filter(g => g.type === 'core');
+  const clus = DATA.filter(g => g.type === 'cluster');
+  const solo = DATA.filter(g => g.type === 'solo').reduce((n, g) => n + g.solo.length, 0);
+  const coreCards = core.reduce((n, g) => n + g.cards.length, 0);
+  const clusCards = clus.reduce((n, g) => n + g.cards.length, 0);
+  document.getElementById('stCore').textContent = core.length;
+  document.getElementById('stCluster').textContent = clus.length;
+  document.getElementById('stSolo').textContent = solo;
+  const total = coreCards + clusCards + solo;
+  document.querySelector('header .sub').textContent =
+    '2026 年 9–12 月题库 · ' + total + ' 张 P2 卡：' + (coreCards + clusCards) + ' 张可串，' + solo + ' 张单点';
+}
+
+/* 筛选 */
+document.querySelectorAll('.bar button[data-f]').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('.bar button[data-f]').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    curFilter = b.dataset.f;
+    render();
+  };
+});
+
+/* 搜索（防抖） */
+let tmr = null;
+qEl.addEventListener('input', () => {
+  clearTimeout(tmr);
+  tmr = setTimeout(render, 120);
+});
+
+/* 全部展开 / 折叠 */
+let allOpen = true;
+document.getElementById('btnExpand').onclick = function(){
+  allOpen = !allOpen;
+  document.querySelectorAll('.grp').forEach(g => g.classList.toggle('open', allOpen));
+  this.textContent = allOpen ? '全部折叠' : '全部展开';
+};
+
+document.getElementById('btnPrint').onclick = () => window.print();
+
+refreshStat();
+render();
+</script>
+</body>
+</html>

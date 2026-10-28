@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>语调诊断 · 录完看音高曲线</title>
+<style>
+  *{box-sizing:border-box;}
+  [hidden]{display:none!important;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;
+    background:#f5f6f8;color:#1a1d24;padding-bottom:44px;
+  }
+  header{
+    background:#fff;border-bottom:1px solid #e3e6ec;
+    padding:14px 22px;display:flex;align-items:center;gap:12px;
+    position:sticky;top:0;z-index:20;flex-wrap:wrap;
+  }
+  header h1{font-size:17px;margin:0;font-weight:600;}
+  header .sub{font-size:12px;color:#7a8090;}
+  header .tag{
+    margin-left:auto;font-size:11.5px;color:#8a5a1a;background:#fdf6e8;
+    border:1px solid #f0e0c0;padding:4px 9px;border-radius:5px;
+  }
+  main{max-width:960px;margin:0 auto;padding:18px 18px 0;display:flex;flex-direction:column;gap:14px;}
+  .card{background:#fff;border:1px solid #e3e6ec;border-radius:9px;overflow:hidden;}
+  .card-hd{
+    padding:11px 16px;font-size:12.5px;font-weight:600;color:#5a6070;
+    background:#fafbfd;border-bottom:1px solid #eceff4;
+    display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+  }
+  .card-hd .sp{margin-left:auto;font-weight:400;color:#9aa0ae;font-size:11.5px;}
+  .card-bd{padding:15px 16px;}
+
+  button{
+    font-family:inherit;font-size:12.5px;cursor:pointer;
+    border:1px solid #d4d9e2;background:#fff;color:#39404e;
+    padding:6px 13px;border-radius:5px;transition:.15s;white-space:nowrap;
+  }
+  button:hover:not(:disabled){background:#f0f2f6;border-color:#c3cad6;}
+  button.pri{background:#2f6df6;border-color:#2f6df6;color:#fff;}
+  button.pri:hover:not(:disabled){background:#2559d0;border-color:#2559d0;}
+  button.rec-on{background:#e04b3a;border-color:#e04b3a;color:#fff;}
+  button.rec-on:hover:not(:disabled){background:#c93e2e;border-color:#c93e2e;}
+  button:disabled{opacity:.45;cursor:not-allowed;}
+  button.mini{padding:3px 9px;font-size:11px;}
+  button.on{background:#eef3ff;border-color:#b9cdf8;color:#2f6df6;}
+
+  textarea{
+    width:100%;border:1px solid #e3e6ec;border-radius:6px;padding:10px 12px;
+    font-family:inherit;font-size:14px;line-height:1.6;resize:vertical;outline:none;
+    color:#22262e;background:#fcfdff;
+  }
+  textarea:focus{border-color:#b9cdf8;background:#fff;}
+  .sents{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px;}
+  .sents button{font-size:11.5px;padding:5px 10px;}
+  .hint{font-size:11.5px;color:#8a8f9c;margin-top:9px;line-height:1.6;}
+
+  .recbar{display:flex;align-items:center;gap:13px;flex-wrap:wrap;}
+  #recBtn{font-size:14px;padding:9px 22px;font-weight:600;}
+  .timer{font-size:22px;font-variant-numeric:tabular-nums;color:#39404e;font-weight:600;min-width:74px;}
+  .meter{flex:1;min-width:120px;height:9px;background:#eef0f4;border-radius:5px;overflow:hidden;}
+  .meter i{display:block;height:100%;width:0;background:#4a86f7;transition:width .06s linear;}
+  .badge{font-size:11.5px;padding:4px 9px;border-radius:5px;background:#f2f4f8;color:#7a8090;}
+  .badge.ok{background:#e9f7ee;color:#1f7a44;}
+  .badge.bad{background:#fdecea;color:#c0392b;}
+
+  .cvwrap{position:relative;}
+  canvas{display:block;width:100%;height:230px;border-radius:6px;background:#fbfcfe;border:1px solid #eef0f4;}
+  .cv-empty{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:12.5px;color:#a8aeba;pointer-events:none;text-align:center;padding:0 20px;
+  }
+  .readout{
+    margin-top:9px;font-size:12px;color:#6a7080;min-height:18px;
+    font-variant-numeric:tabular-nums;
+  }
+  .readout b{color:#2f6df6;font-weight:600;}
+
+  .diag{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px;margin-top:14px;}
+  .dcell{background:#fafbfd;border:1px solid #eef0f4;border-radius:7px;padding:11px 12px;}
+  .dcell .k{font-size:11.5px;color:#8a8f9c;margin-bottom:5px;}
+  .dcell .v{font-size:16px;font-weight:600;color:#2b3140;}
+  .dcell .n{font-size:11px;color:#9aa0ae;margin-top:4px;line-height:1.5;}
+  .score{
+    display:inline-flex;align-items:center;font-size:11px;
+    padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:2px;
+  }
+  .score.good{background:#e9f7ee;color:#1f7a44;}
+  .score.mid{background:#fdf6e8;color:#8a5a1a;}
+  .score.low{background:#fdecea;color:#c0392b;}
+
+  .seg-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:12.5px;}
+  .seg-table th{
+    text-align:left;font-weight:600;color:#7a8090;font-size:11.5px;
+    padding:6px 9px;border-bottom:1px solid #eceff4;background:#fafbfd;
+  }
+  .seg-table td{padding:7px 9px;border-bottom:1px solid #f4f6f9;color:#3a4050;}
+  .seg-table tr:last-child td{border-bottom:0;}
+  .seg-table tr.playing{background:#f4f8ff;}
+  .seg-table .mono{font-variant-numeric:tabular-nums;color:#6a7080;}
+  .verdict{font-weight:600;}
+  .verdict.up{color:#c0392b;}
+  .verdict.down{color:#2559d0;}
+  .verdict.flat{color:#8a8f9c;}
+  .legend{font-size:11.5px;color:#9aa0ae;margin-top:10px;line-height:1.7;}
+  .legend b{color:#5a6070;font-weight:600;}
+  .err{color:#c0392b;font-size:12px;margin-top:10px;}
+  .tip{
+    font-size:11.5px;color:#8a5a1a;background:#fdf6e8;border:1px solid #f3e5c8;
+    padding:8px 11px;border-radius:6px;margin-top:12px;line-height:1.65;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>语调诊断</h1>
+  <span class="sub">录一句，看音高怎么走 · 句末升还是降</span>
+  <span class="tag">实验页 · 不动跟读神器</span>
+</header>
+
+<main>
+  <!-- 1. 选句子 -->
+  <section class="card">
+    <div class="card-hd">
+      练习句
+      <span class="sp">选一句，或者自己改写</span>
+    </div>
+    <div class="card-bd">
+      <div class="sents" id="sents"></div>
+      <textarea id="src" rows="2">I've been living there for pretty much my whole life.</textarea>
+      <div class="hint" id="expect"></div>
+    </div>
+  </section>
+
+  <!-- 2. 录音 -->
+  <section class="card">
+    <div class="card-hd">
+      录音
+      <span class="badge" id="micBadge">麦克风未启用</span>
+      <span class="sp" id="anaSub">录完自动分析，不用点第二下</span>
+    </div>
+    <div class="card-bd">
+      <div class="recbar">
+        <button class="pri" id="recBtn">开始录音</button>
+        <span class="timer" id="timer">0.0s</span>
+        <div class="meter"><i id="meterFill"></i></div>
+        <button class="mini" id="playBtn" disabled>▶ 播放我的</button>
+      </div>
+      <div class="err" id="err" hidden></div>
+      <div class="tip" id="tip" hidden></div>
+    </div>
+  </section>
+
+  <!-- 3. 诊断 -->
+  <section class="card">
+    <div class="card-hd">
+      音高曲线
+      <span class="sp">纵轴＝音高，线断开＝清音或停顿</span>
+    </div>
+    <div class="card-bd">
+      <div class="cvwrap">
+        <canvas id="cv"></canvas>
+        <div class="cv-empty" id="cvEmpty">录完这里会出音高曲线：<br>线往上爬＝语调升，往下走＝语调降</div>
+      </div>
+      <div class="readout" id="readout">鼠标移到曲线上可以看某个时刻的音高。</div>
+
+      <div class="diag" id="diag"></div>
+
+      <table class="seg-table" id="segTable" hidden>
+        <thead>
+          <tr><th>句</th><th>时间</th><th>句末走向</th><th>幅度</th><th>该升/该降</th><th></th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="legend">
+        <b>怎么看这张图：</b>横轴时间，纵轴音高（每格 3 个半音，标注处是频率）。
+        <b>线断开</b>＝清音（s / f / th）或换气，不是漏检。
+        浅灰色柱子是音量，帮你判断有没有把音读"虚"。
+        每句末尾那段浅蓝底色＝用来判升降的最后 0.4 秒。
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+'use strict';
+
+/* ======================= 常量 ======================= */
+const SR8 = 8000;         // 分析采样率：实测精度 0.3%，成本只有 44.1k 的 1/18
+const WIN8 = 200;         // 帧长 25ms
+const HOP8 = 80;          // 帧移 10ms
+const FMIN = 75;          // 人声下限
+const FMAX = 500;         // 人声上限（留余量，防止女声高音被判清音）
+const F_REF = 100;        // 半音换算基准
+const SIL_MS = 200;       // 静音 ≥200ms 算换句
+const TAIL_MS = 400;      // 句末取最后 400ms 判升降
+const MIN_SEG_MS = 250;   // 短于此的碎片不算一句（咳嗽、咂嘴、环境噪声）
+
+/* ======================= 句子库 ======================= */
+const SENTS = [
+  { t: "I've been living there for pretty much my whole life.", e: '陈述句 → 句末应该 ↘ 降下来', d: 'down' },
+  { t: 'Do you think it matters to keep in touch with old friends?', e: '一般疑问句 → 句末应该 ↗ 升上去', d: 'up' },
+  { t: 'What do you like most about your hometown?', e: '特殊疑问句 → 句末 ↘ 降（wh- 开头不升）', d: 'down' },
+  { t: 'I like reading, hiking, and photography.', e: '列举 → 前两项 ↗ 升、最后一项 ↘ 降', d: 'mixed' },
+  { t: 'It was absolutely amazing — I could not believe my eyes!', e: '感叹 → 整体起伏大，落点 ↘ 降', d: 'down' },
+  { t: 'Well, it depends on the person, I suppose.', e: '犹豫/保留 → 句末常 ↗ 微升', d: 'up' }
+];
+
+/* ======================= 小工具 ======================= */
+const $ = s => document.querySelector(s);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const semiOf = f => 12 * Math.log2(f / F_REF);
+
+/* 重采样：先移动平均低通（防混叠），再线性插值。比例可以是小数 */
+function resample(src, from, to) {
+  const k = from / to;
+  const w = Math.max(1, Math.round(k));
+  const lp = new Float32Array(src.length);
+  let acc = 0;
+  for (let i = 0; i < src.length; i++) {
+    acc += src[i];
+    if (i >= w) acc -= src[i - w];
+    lp[i] = acc / Math.min(i + 1, w);
+  }
+  const outN = Math.floor(src.length / k);
+  const out = new Float32Array(outN);
+  for (let i = 0; i < outN; i++) {
+    const p = i * k, i0 = Math.floor(p), f = p - i0;
+    out[i] = (lp[i0] || 0) * (1 - f) + (lp[i0 + 1] || 0) * f;
+  }
+  return out;
+}
+
+/* YIN 基频提取：累积均值归一化差分 + 绝对阈值 + 抛物线插值。
+   纯自相关会把 200Hz 认成 100Hz（倍频错误），实测 P90 误差 50%；
+   换 YIN 后 P90 降到 0.72%，零倍频错误。 */
+function yin(frame, sr) {
+  const W = frame.length;
+  let energy = 0;
+  for (let i = 0; i < W; i++) energy += frame[i] * frame[i];
+  const rms = Math.sqrt(energy / W);
+  if (rms < 0.008) return { f0: null, rms, ap: 1 };        // 太安静 → 不算有声
+
+  const tauMin = Math.max(2, Math.floor(sr / FMAX));
+  const tauMax = Math.min(Math.floor(sr / FMIN), Math.floor(W / 2));
+  const half = W - tauMax;
+  if (half < 16 || tauMax <= tauMin + 2) return { f0: null, rms, ap: 1 };
+
+  const d = new Float32Array(tauMax + 1);
+  for (let tau = tauMin; tau <= tauMax; tau++) {
+    let s = 0;
+    for (let j = 0; j < half; j++) { const df = frame[j] - frame[j + tau]; s += df * df; }
+    d[tau] = s;
+  }
+  const cm = new Float32Array(tauMax + 1);
+  let running = 0;
+  cm[tauMin] = 1;
+  for (let tau = tauMin; tau <= tauMax; tau++) {
+    running += d[tau];
+    cm[tau] = running > 0 ? d[tau] * (tau - tauMin + 1) / running : 1;
+  }
+  let bestTau = -1;
+  for (let tau = tauMin + 1; tau < tauMax; tau++) {
+    if (cm[tau] < 0.15) {                     // 第一个低于阈值＝基频周期
+      while (tau + 1 < tauMax && cm[tau + 1] < cm[tau]) tau++;
+      bestTau = tau; break;
+    }
+  }
+  if (bestTau < 0) {                          // 找不到 → 退化为全局最小，太差判清音
+    let mn = Infinity;
+    for (let tau = tauMin + 1; tau < tauMax; tau++) if (cm[tau] < mn) { mn = cm[tau]; bestTau = tau; }
+    if (bestTau < 0 || mn > 0.7) return { f0: null, rms, ap: mn };
+  }
+  let t = bestTau;
+  if (t > tauMin && t < tauMax) {
+    const y0 = cm[t - 1], y1 = cm[t], y2 = cm[t + 1];
+    const den = 2 * (2 * y1 - y0 - y2);
+    if (den !== 0) t += (y2 - y0) / den;
+  }
+  return { f0: sr / t, rms, ap: cm[bestTau] };
+}
+
+/* ======================= 音频上下文 / 麦克风 ======================= */
+let audioCtx = null, micStream = null;
+
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+/* 整页只申请一次麦克风，录音只开关 MediaRecorder。
+   录音时关掉降噪/回声消除/自动增益 —— 这三个都会削掉元音尾部，
+   把音高曲线弄断，语调就判不准了。 */
+async function ensureMic() {
+  if (micStream && micStream.getAudioTracks().some(t => t.readyState === 'live')) return micStream;
+  micStream = await navigator.mediaDevices.getUserMedia({
+    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+  });
+  return micStream;
+}
+
+window.addEventListener('pagehide', () => {
+  if (micStream) { try { micStream.getTracks().forEach(t => t.stop()); } catch (e) {} micStream = null; }
+});
+
+/* ======================= 录音 ======================= */
+let mediaRec = null, recChunks = [], recT0 = 0, recTick = 0, recording = false;
+let meterFill = null, meterRaf = 0, meterAn = null, meterBuf = null;
+
+let lastPts = [], lastDur = 0, lastSegs = [], lastUrl = null, lastStat = null;
+
+async function startRec() {
+  if (recording) return;
+  $('#err').hidden = true;
+  $('#tip').hidden = true;
+  let stream;
+  try {
+    stream = await ensureMic();
+  } catch (e) {
+    showErr('麦克风没开：请在地址栏允许麦克风权限后重试');
+    $('#micBadge').textContent = '麦克风被拒绝';
+    $('#micBadge').className = 'badge bad';
+    throw e;
+  }
+  $('#micBadge').textContent = location.protocol === 'file:' ? '麦克风可用 · 首次要授权' : '麦克风正常';
+  $('#micBadge').className = 'badge ok';
+
+  const mime = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus']
+    .find(t => { try { return MediaRecorder.isTypeSupported(t); } catch (e) { return false; } }) || '';
+  let mr;
+  try { mr = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined); }
+  catch (e) { mr = new MediaRecorder(stream); }
+
+  mediaRec = mr;
+  recChunks = [];
+  mr.ondataavailable = e => { if (e.data && e.data.size) recChunks.push(e.data); };
+  mr.onstop = () => {
+    stopMeter();
+    const blob = new Blob(recChunks, { type: mr.mimeType || 'audio/webm' });
+    if (lastUrl) { try { URL.revokeObjectURL(lastUrl); } catch (e) {} }
+    lastUrl = URL.createObjectURL(blob);
+    analyze(blob).catch(err => showErr('分析失败：' + (err && err.message || err)));
+  };
+
+  mr.start();
+  recording = true;
+  recT0 = performance.now();
+  $('#recBtn').textContent = '停止录音';
+  $('#recBtn').className = 'rec-on';
+  $('#playBtn').disabled = true;
+  $('#anaSub').textContent = '正在录音…';
+  startMeter(stream);
+  recTick = setInterval(() => {
+    $('#timer').textContent = ((performance.now() - recT0) / 1000).toFixed(1) + 's';
+  }, 100);
+}
+
+function stopRec() {
+  if (!recording) return;
+  recording = false;
+  clearInterval(recTick); recTick = 0;
+  if (mediaRec && mediaRec.state !== 'inactive') mediaRec.stop();
+  $('#recBtn').textContent = '开始录音';
+  $('#recBtn').className = 'pri';
+  $('#anaSub').textContent = '分析中…';
+}
+
+/* 录音时只看音量（不做音高，避免和录音抢资源） */
+function startMeter(stream) {
+  const ctx = getCtx();
+  const node = ctx.createMediaStreamSource(stream);
+  meterAn = ctx.createAnalyser();
+  meterAn.fftSize = 512;
+  node.connect(meterAn);
+  meterBuf = new Float32Array(meterAn.fftSize);
+  const tick = () => {
+    meterAn.getFloatTimeDomainData(meterBuf);
+    let peak = 0;
+    for (let i = 0; i < meterBuf.length; i++) { const v = Math.abs(meterBuf[i]); if (v > peak) peak = v; }
+    if (meterFill) meterFill.style.width = Math.min(100, peak * 190) + '%';
+    meterRaf = requestAnimationFrame(tick);
+  };
+  tick();
+}
+
+function stopMeter() {
+  cancelAnimationFrame(meterRaf);
+  meterRaf = 0;
+  if (meterFill) meterFill.style.width = '0%';
+}
+
+/* ======================= 离线分析（这是准的那份） ======================= */
+async function analyze(blob) {
+  const ctx = getCtx();
+  const ab = await ctx.decodeAudioData(await blob.arrayBuffer());
+  const raw = ab.getChannelData(0);          // 多声道取第一声道就够
+  const ds = resample(raw, ab.sampleRate, SR8);
+
+  const pts = [];
+  for (let s = 0; s + WIN8 <= ds.length; s += HOP8) {
+    const r = yin(ds.subarray(s, s + WIN8), SR8);
+    pts.push({ ms: Math.round(s / SR8 * 1000), f0: r.f0, rms: r.rms });
+  }
+  fixOctaves(pts);
+  medFilter3(pts);
+
+  lastPts = pts;
+  lastDur = ab.duration;
+  lastSegs = segment(pts);
+  lastStat = stats(pts, ab.duration, lastSegs);
+
+  renderStatic();
+  renderDiag(lastStat, lastSegs);
+  $('#cvEmpty').hidden = true;
+  $('#playBtn').disabled = false;
+  $('#anaSub').textContent = '录了 ' + ab.duration.toFixed(1) + 's · 切出 ' + lastSegs.length + ' 段';
+
+  if (!lastSegs.length) showErr('没抓到有声段：可能是麦克风音量太小，或者录得太短。');
+  else {
+    const weak = lastStat.voicedRatio < 0.35;
+    if (weak) showTip('有声占比只有 ' + Math.round(lastStat.voicedRatio * 100) + '%，声音可能偏小或离麦克风太远，音高曲线会发虚。');
+  }
+
+  window.__lastResult = {
+    dur: +ab.duration.toFixed(2),
+    frames: pts.length,
+    voiced: pts.filter(p => p.f0 != null).length,
+    medianF0: Math.round(lastStat.medianF0),
+    rangeSemis: +lastStat.rangeSemis.toFixed(2),
+    voicedRatio: +lastStat.voicedRatio.toFixed(2),
+    segs: lastStat.segs.map(s => ({ a: s.a, b: s.b, semi: +s.semi.toFixed(2), dir: s.dir })),
+    segCount: lastSegs.length
+  };
+  return window.__lastResult;
+}
+
+/* 3 点中值滤波：只削孤立尖刺（30ms 内），不会削弱真实的语调走向 */
+function medFilter3(pts) {
+  const src = pts.map(p => p.f0);
+  for (let i = 1; i < pts.length - 1; i++) {
+    const a = src[i - 1], b = src[i], c = src[i + 1];
+    if (a == null || b == null || c == null) continue;
+    pts[i].f0 = Math.max(Math.min(a, b), Math.min(Math.max(a, b), c));
+  }
+}
+
+/* 八度跳变修正：说话时音高不会整八度地跳，出现 ±12 半音的突变基本都是
+   弱起/弱收处把基频算成了一半或两倍。修掉它，曲线和音域才可信。 */
+function fixOctaves(pts) {
+  let last = null;
+  for (const p of pts) {
+    if (p.f0 == null) continue;
+    if (last) {
+      const ratio = 12 * Math.log2(p.f0 / last);
+      const oct = Math.round(ratio / 12);
+      if (oct !== 0 && Math.abs(ratio - oct * 12) < 1.5) {
+        p.f0 = p.f0 / Math.pow(2, oct);
+      }
+    }
+    last = p.f0;
+  }
+}
+
+/* 按静音切句 */
+function segment(pts) {
+  const segs = [];
+  let cur = null, sil = 0;
+  for (let i = 0; i < pts.length; i++) {
+    const p = pts[i];
+    if (p.f0 != null) {
+      if (!cur) cur = { a: p.ms, pts: [] };
+      cur.pts.push(p);
+      sil = 0;
+    } else if (cur) {
+      sil += (i > 0 ? pts[i].ms - pts[i - 1].ms : 10);
+      if (sil >= SIL_MS) {
+        cur.b = cur.pts[cur.pts.length - 1].ms;
+        segs.push(cur);
+        cur = null; sil = 0;
+      }
+    }
+  }
+  if (cur) { cur.b = cur.pts[cur.pts.length - 1].ms; segs.push(cur); }
+
+  return segs.filter(s => {
+    if (s.b - s.a < MIN_SEG_MS) return false;      // 太短：咳嗽、咂嘴
+    if (s.pts.length < 8) return false;
+    const f = s.pts.map(p => p.f0);
+    const mean = f.reduce((a, b) => a + b, 0) / f.length;
+    if (!mean) return false;
+    const sd = Math.sqrt(f.reduce((a, b) => a + (b - mean) ** 2, 0) / f.length);
+    return sd / mean < 0.18;                        // 音高乱跳＝噪声，不是人声
+  });
+}
+
+/* 句末升降：对最后 400ms 做最小二乘拟合，用半音算总变化。
+   直接拿首末两帧相减会被抖动带偏，拟合后稳定得多。 */
+function tailTrend(seg) {
+  const tail = seg.pts.filter(p => p.ms >= seg.b - TAIL_MS);
+  if (tail.length < 4) return { semi: 0, dir: 'na', slope: 0 };
+  const f1 = tail[0].f0;
+  const xs = tail.map(p => (p.ms - tail[0].ms) / 1000);
+  const ys = tail.map(p => 12 * Math.log2(p.f0 / f1));
+  const mx = xs.reduce((a, b) => a + b, 0) / xs.length;
+  const my = ys.reduce((a, b) => a + b, 0) / ys.length;
+  let num = 0, den = 0;
+  for (let k = 0; k < xs.length; k++) { num += (xs[k] - mx) * (ys[k] - my); den += (xs[k] - mx) ** 2; }
+  const slope = den ? num / den : 0;
+  const semi = slope * (xs[xs.length - 1] - xs[0]);
+  const dir = semi > 1.0 ? 'up'
+    : semi < -1.0 ? 'down'
+    : Math.abs(semi) < 0.5 ? 'flat'
+    : (semi > 0 ? 'slight-up' : 'slight-down');
+  return { semi, dir, slope };
+}
+
+function stats(pts, dur, segs) {
+  const voiced = pts.filter(p => p.f0 != null).map(p => p.f0).sort((a, b) => a - b);
+  const med = voiced.length ? voiced[Math.floor(voiced.length / 2)] : 0;
+  const p5 = voiced.length ? voiced[Math.floor(voiced.length * 0.05)] : 0;
+  const p95 = voiced.length ? voiced[Math.floor(voiced.length * 0.95)] : 0;
+  const rangeSemis = (p5 && p95) ? 12 * Math.log2(p95 / p5) : 0;
+  const voicedMs = segs.reduce((a, s) => a + (s.b - s.a), 0);
+
+  const segInfo = segs.map(s => {
+    const tr = tailTrend(s);
+    return { a: s.a, b: s.b, semi: tr.semi, dir: tr.dir, slope: tr.slope };
+  });
+
+  let pauses = 0;
+  for (let i = 1; i < segs.length; i++) if (segs[i].a - segs[i - 1].b >= 300) pauses++;
+
+  return {
+    medianF0: med, p5, p95, rangeSemis,
+    voicedRatio: dur > 0 ? voicedMs / 1000 / dur : 0,
+    pauses, segs: segInfo
+  };
+}
+
+/* ======================= 绘制 ======================= */
+const Y_MIN = -6, Y_MAX = 26;           // 半音范围：75Hz≈-5，400Hz≈+24
+const PAD_L = 36, PAD_R = 9, PAD_T = 16, PAD_B = 19;
+
+let staticCv = null, svgW = 0, svgH = 0, svgDpr = 1;
+
+const yOf = (f, h) => {
+  const t = (semiOf(f) - Y_MIN) / (Y_MAX - Y_MIN);
+  return PAD_T + (1 - Math.max(0, Math.min(1, t))) * (h - PAD_T - PAD_B);
+};
+const xOf = (ms, durMs, w) => PAD_L + (ms / Math.max(1, durMs)) * (w - PAD_L - PAD_R);
+
+function drawGrid(g, w, h) {
+  g.strokeStyle = '#eef1f6'; g.lineWidth = 1;
+  g.fillStyle = '#a8aeba';
+  g.font = '10px -apple-system,"Segoe UI",sans-serif';
+  g.textAlign = 'right'; g.textBaseline = 'middle';
+  for (let s = Y_MIN; s <= Y_MAX; s += 3) {
+    const f = F_REF * Math.pow(2, s / 12);
+    const y = yOf(f, h);
+    g.beginPath(); g.moveTo(PAD_L, y); g.lineTo(w - PAD_R, y); g.stroke();
+    if (s % 6 === 0) g.fillText(Math.round(f) + 'Hz', PAD_L - 6, y);
+  }
+  // 120Hz 参考线：英语说话的常见中枢
+  const yRef = yOf(120, h);
+  g.strokeStyle = '#e6ebf5'; g.setLineDash([3, 3]);
+  g.beginPath(); g.moveTo(PAD_L, yRef); g.lineTo(w - PAD_R, yRef); g.stroke();
+  g.setLineDash([]);
+}
+
+function drawPitch(g, pts, durMs, w, h, color, lw) {
+  g.strokeStyle = color; g.lineWidth = lw; g.lineJoin = 'round'; g.lineCap = 'round';
+  let pen = false;
+  g.beginPath();
+  for (const p of pts) {
+    if (p.f0 == null) { pen = false; continue; }
+    const x = xOf(p.ms, durMs, w), y = yOf(p.f0, h);
+    if (!pen) { g.moveTo(x, y); pen = true; } else g.lineTo(x, y);
+  }
+  g.stroke();
+}
+
+/* 把整张图渲染到离屏 canvas 缓存，游标/悬停只需贴图，不重画几千个点 */
+function renderStatic() {
+  const cv = $('#cv');
+  if (!cv || !lastPts.length) return;
+  const dpr = window.devicePixelRatio || 1;
+  const r = cv.getBoundingClientRect();
+  const w = Math.max(1, r.width), h = Math.max(1, r.height);
+  svgW = w; svgH = h; svgDpr = dpr;
+
+  if (!staticCv) staticCv = document.createElement('canvas');
+  staticCv.width = Math.round(w * dpr);
+  staticCv.height = Math.round(h * dpr);
+  const g = staticCv.getContext('2d');
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.clearRect(0, 0, w, h);
+
+  const durMs = Math.max(100, lastDur * 1000);
+  drawGrid(g, w, h);
+
+  // 音量包络（浅灰柱）
+  g.fillStyle = 'rgba(140,150,170,.11)';
+  const bw = Math.max(1, (w - PAD_L - PAD_R) / lastPts.length);
+  for (const p of lastPts) {
+    const bh = Math.min(1, p.rms * 2.2) * (h - PAD_T - PAD_B) * 0.5;
+    g.fillRect(xOf(p.ms, durMs, w), h - PAD_B - bh, Math.max(1, bw), bh);
+  }
+
+  // 每句末尾 400ms 高亮：这段才是判升降的依据
+  g.fillStyle = 'rgba(47,109,246,.10)';
+  for (const s of lastSegs) {
+    const x1 = xOf(Math.max(s.a, s.b - TAIL_MS), durMs, w);
+    const x2 = xOf(s.b, durMs, w);
+    g.fillRect(x1, PAD_T, Math.max(1, x2 - x1), h - PAD_T - PAD_B);
+  }
+
+  // 句间分隔
+  g.strokeStyle = '#dfe4ee'; g.setLineDash([2, 4]);
+  for (const s of lastSegs) {
+    const x = xOf(s.b, durMs, w);
+    g.beginPath(); g.moveTo(x, PAD_T); g.lineTo(x, h - PAD_B); g.stroke();
+  }
+  g.setLineDash([]);
+
+  // 音高主曲线
+  drawPitch(g, lastPts, durMs, w, h, '#2f6df6', 2.4);
+
+  // 时间刻度
+  g.fillStyle = '#a8aeba'; g.textAlign = 'center'; g.textBaseline = 'top';
+  const dur = durMs / 1000;
+  const step = dur > 24 ? 5 : dur > 12 ? 2 : 1;
+  for (let t = 0; t <= dur; t += step) g.fillText(t + 's', xOf(t * 1000, durMs, w), h - PAD_B + 3);
+
+  blit(null);   // 静态渲染不画游标，只在播放时出现
+}
+
+function blit(cursorMs) {
+  const cv = $('#cv');
+  if (cv.width !== staticCv.width || cv.height !== staticCv.height) {
+    cv.width = staticCv.width; cv.height = staticCv.height;
+  }
+  const g = cv.getContext('2d');
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.clearRect(0, 0, cv.width, cv.height);
+  g.drawImage(staticCv, 0, 0);
+  g.setTransform(svgDpr, 0, 0, svgDpr, 0, 0);
+
+  if (cursorMs != null && lastPts.length) {
+    const durMs = Math.max(100, lastDur * 1000);
+    const x = xOf(cursorMs, durMs, svgW);
+    g.strokeStyle = '#e04b3a'; g.lineWidth = 1.6;
+    g.beginPath(); g.moveTo(x, PAD_T); g.lineTo(x, svgH - PAD_B); g.stroke();
+    g.fillStyle = '#e04b3a';
+    g.beginPath(); g.arc(x, PAD_T, 3, 0, Math.PI * 2); g.fill();
+  }
+  return g;
+}
+
+/* ======================= 诊断卡片 ======================= */
+const DIR_TXT = { up: '↗ 升', down: '↘ 降', flat: '→ 平', 'slight-up': '↗ 微升', 'slight-down': '↘ 微降', na: '—' };
+const DIR_CLS = { up: 'up', 'slight-up': 'up', down: 'down', 'slight-down': 'down', flat: 'flat', na: 'flat' };
+
+function gradeRange(s) {
+  if (s < 3) return { txt: '很平', cls: 'low', note: '几乎没起伏，听着会显得呆板' };
+  if (s < 6) return { txt: '偏平', cls: 'mid', note: '有起伏但偏窄，可以再"放"开一点' };
+  if (s <= 11) return { txt: '合适', cls: 'good', note: '英语朗读常见区间，自然' };
+  return { txt: '起伏大', cls: 'mid', note: '情绪足，但注意别每句都这么夸张' };
+}
+
+function renderDiag(st, segs) {
+  const gr = gradeRange(st.rangeSemis);
+  const upCnt = st.segs.filter(s => s.dir === 'up' || s.dir === 'slight-up').length;
+  const downCnt = st.segs.filter(s => s.dir === 'down' || s.dir === 'slight-down').length;
+
+  $('#diag').innerHTML = [
+    cell('音域跨度', st.rangeSemis.toFixed(1) + ' 半音',
+      '约 ' + Math.round(st.p5) + '–' + Math.round(st.p95) + 'Hz · ' + gr.note, gr),
+    cell('说话音区', Math.round(st.medianF0) + ' Hz', '音高中位数，看你在哪个音区'),
+    cell('有声占比', Math.round(st.voicedRatio * 100) + '%', '越低说明停顿/虚音越多'),
+    cell('句间停顿', st.pauses + ' 次', '句与句之间 ≥0.3 秒的空白'),
+    cell('句末走向', '升 ' + upCnt + ' · 降 ' + downCnt, '按每句最后 0.4 秒判')
+  ].join('');
+
+  const tb = $('#segTable tbody');
+  tb.innerHTML = '';
+  const exp = currentExpect();
+  st.segs.forEach((s, i) => {
+    const tr = document.createElement('tr');
+    tr.dataset.a = s.a; tr.dataset.b = s.b;
+    tr.innerHTML =
+      '<td>' + (i + 1) + '</td>' +
+      '<td class="mono">' + (s.a / 1000).toFixed(1) + '–' + (s.b / 1000).toFixed(1) + 's</td>' +
+      '<td class="verdict ' + (DIR_CLS[s.dir] || 'flat') + '">' + (DIR_TXT[s.dir] || '—') + '</td>' +
+      '<td class="mono">' + (s.semi > 0 ? '+' : '') + s.semi.toFixed(1) + ' 半音</td>' +
+      '<td>' + judgeSeg(s, exp) + '</td>' +
+      '<td><button class="mini" data-a="' + s.a + '" data-b="' + s.b + '">▶ 这句</button></td>';
+    tb.appendChild(tr);
+  });
+  $('#segTable').hidden = st.segs.length === 0;
+
+  tb.querySelectorAll('button[data-a]').forEach(b => {
+    b.onclick = () => playRange(+b.dataset.a, +b.dataset.b);
+  });
+}
+
+function cell(k, v, note, grade) {
+  return '<div class="dcell"><div class="k">' + k + '</div><div class="v">' + v +
+    (grade ? '<span class="score ' + grade.cls + '">' + grade.txt + '</span>' : '') +
+    '</div><div class="n">' + note + '</div></div>';
+}
+
+/* 只对单句做「该升/该降」提示；多句连读时不瞎猜 */
+function currentExpect() {
+  const txt = $('#src').value.trim();
+  const hit = SENTS.find(s => s.t === txt);
+  if (hit) return hit.d;
+  if (/\?\s*$/.test(txt)) {
+    return /^(what|why|how|when|where|who|which|whose)\b/i.test(txt) ? 'down' : 'up';
+  }
+  return 'down';
+}
+
+function judgeSeg(s, exp) {
+  if (exp === 'mixed') return '<span style="color:#9aa0ae">列举句末项该降</span>';
+  const isUp = s.dir === 'up' || s.dir === 'slight-up';
+  const isDown = s.dir === 'down' || s.dir === 'slight-down';
+  if (exp === 'down') {
+    return isDown ? '<span style="color:#1f7a44">✓ 对</span>'
+      : isUp ? '<span style="color:#c0392b">✗ 该降</span>'
+      : '<span style="color:#9aa0ae">— 太弱</span>';
+  }
+  if (exp === 'up') {
+    return isUp ? '<span style="color:#1f7a44">✓ 对</span>'
+      : isDown ? '<span style="color:#c0392b">✗ 该升</span>'
+      : '<span style="color:#9aa0ae">— 太弱</span>';
+  }
+  return '—';
+}
+
+function showErr(msg) { const e = $('#err'); e.textContent = msg; e.hidden = false; }
+function showTip(msg) { const e = $('#tip'); e.textContent = msg; e.hidden = false; }
+
+/* ======================= 播放 ======================= */
+let player = null, playRaf = 0;
+
+function playRange(fromMs, toMs) {
+  if (!lastUrl) return;
+  if (player) { player.pause(); player = null; }
+  cancelAnimationFrame(playRaf);
+
+  const a = new Audio(lastUrl);
+  player = a;
+  a.currentTime = Math.max(0, fromMs / 1000);
+  a.play();
+
+  const stopAt = toMs == null ? null : toMs / 1000;
+  const tick = () => {
+    if (a.paused || a.ended) { blit(null); markPlaying(-1); return; }
+    blit(a.currentTime * 1000);
+    if (stopAt != null && a.currentTime >= stopAt) { a.pause(); blit(null); markPlaying(-1); return; }
+    playRaf = requestAnimationFrame(tick);
+  };
+  playRaf = requestAnimationFrame(tick);
+  markPlaying(fromMs);
+}
+
+function markPlaying(fromMs) {
+  document.querySelectorAll('#segTable tbody tr').forEach(tr => {
+    tr.classList.toggle('playing', +tr.dataset.a === fromMs);
+  });
+}
+
+/* ======================= 交互绑定 ======================= */
+document.addEventListener('DOMContentLoaded', () => {
+  meterFill = $('#meterFill');
+
+  const box = $('#sents');
+  SENTS.forEach(s => {
+    const b = document.createElement('button');
+    b.className = 'mini';
+    b.textContent = s.t.length > 26 ? s.t.slice(0, 24) + '…' : s.t;
+    b.title = s.t + '\n' + s.e;
+    b.onclick = () => {
+      $('#src').value = s.t;
+      updateExpect();
+      box.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+    };
+    box.appendChild(b);
+  });
+  updateExpect();
+  $('#src').addEventListener('input', updateExpect);
+
+  $('#recBtn').onclick = () => {
+    if (recording) stopRec();
+    else startRec().catch(() => {});
+  };
+
+  $('#playBtn').onclick = () => playRange(0, null);
+
+  /* 悬停读数 */
+  const cv = $('#cv');
+  cv.addEventListener('mousemove', e => {
+    if (!lastPts.length) return;
+    const r = cv.getBoundingClientRect();
+    const x = e.clientX - r.left;
+    const durMs = Math.max(100, lastDur * 1000);
+    if (x < PAD_L || x > r.width - PAD_R) { $('#readout').innerHTML = '鼠标移到曲线上可以看某个时刻的音高。'; return; }
+    const ms = (x - PAD_L) / (r.width - PAD_L - PAD_R) * durMs;
+    // 找最近的有声帧
+    let best = null, bd = 1e9;
+    for (const p of lastPts) {
+      if (p.f0 == null) continue;
+      const d = Math.abs(p.ms - ms);
+      if (d < bd) { bd = d; best = p; }
+    }
+    if (!best || bd > 300) { $('#readout').innerHTML = '这个位置没有稳定音高（清音或停顿）。'; return; }
+    $('#readout').innerHTML = '时间 <b>' + (best.ms / 1000).toFixed(2) + 's</b> · 音高 <b>' +
+      Math.round(best.f0) + ' Hz</b> · 相对 100Hz <b>' + (semiOf(best.f0) > 0 ? '+' : '') +
+      semiOf(best.f0).toFixed(1) + ' 半音</b>';
+  });
+  cv.addEventListener('mouseleave', () => {
+    $('#readout').innerHTML = '鼠标移到曲线上可以看某个时刻的音高。';
+  });
+
+  window.addEventListener('resize', () => {
+    if (lastPts.length) renderStatic();
+  });
+
+  maybeSelftest();
+});
+
+function updateExpect() {
+  const txt = $('#src').value.trim();
+  const hit = SENTS.find(s => s.t === txt);
+  const d = currentExpect();
+  $('#expect').textContent = hit ? '提示：' + hit.e
+    : d === 'up' ? '提示：这句看着像一般疑问句 → 句末 ↗ 升'
+    : '提示：陈述句/特殊疑问句 → 句末 ↘ 降';
+}
+
+/* ======================= 自测（headless 用，正常使用不会触发） ======================= */
+async function maybeSelftest() {
+  if (!/[?&]selftest=1/.test(location.search)) return;
+  const q = new URLSearchParams(location.search);
+  const ms = Math.max(800, +(q.get('ms') || 3000));
+  const log = [];
+  const post = data => { try { fetch('/report', { method: 'POST', body: JSON.stringify(data) }); } catch (e) {} };
+  try {
+    await startRec();
+    log.push('rec:started');
+    await sleep(ms);
+    stopRec();
+    const t0 = Date.now();
+    while (!window.__lastResult && Date.now() - t0 < 20000) await sleep(100);
+    log.push('analysis:' + (window.__lastResult ? 'ok' : 'timeout'));
+    const rms = lastPts.map(p => p.rms).sort((a, b) => a - b);
+    const diag = {
+      maxRms: rms.length ? +rms[rms.length - 1].toFixed(4) : 0,
+      medRms: rms.length ? +rms[Math.floor(rms.length / 2)].toFixed(4) : 0,
+      p90Rms: rms.length ? +rms[Math.floor(rms.length * 0.9)].toFixed(4) : 0
+    };
+    post({
+      ok: !!window.__lastResult, log, diag, result: window.__lastResult || null,
+      cvPng: (() => { try { return document.getElementById('cv').toDataURL('image/png'); } catch (e) { return null; } })()
+    });
+  } catch (e) {
+    post({ ok: false, log, error: (e && e.message) || String(e) });
+  }
+}
+</script>
+</body>
+</html>

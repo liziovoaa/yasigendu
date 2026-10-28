@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="BhwUtQL674KBvjR4MFXMuo">
+<head data-page-node-id="WHJkyeSKKceDOpEsnUbhkp">
+<meta charset="UTF-8" data-page-node-id="5TPoGwBHpvFHmQKNIdL30R">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="52owvbOUVm5KCWhi9qYrVt">
+<title>雅思口语跟读器 · 美式发音</title>
+<style>
+  *{box-sizing:border-box;}
+  [hidden]{display:none!important;}
+  body{
+    margin:0;padding:0;
+    font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;
+    background:#f5f6f8;color:#1a1d24;
+  }
+  header{
+    background:#fff;border-bottom:1px solid #e3e6ec;
+    padding:14px 22px;display:flex;align-items:center;gap:14px;
+    position:sticky;top:0;z-index:20;
+  }
+  header h1{font-size:17px;margin:0;font-weight:600;}
+  header .sub{font-size:12px;color:#7a8090;margin-left:2px;}
+  .head-tip{
+    margin-left:auto;font-size:12px;color:#8a8f9c;
+    background:#f2f4f8;padding:5px 10px;border-radius:5px;
+  }
+  .wrap{display:grid;grid-template-columns:1fr 1fr;gap:0;height:calc(100vh - 60px);}
+  .pane{display:flex;flex-direction:column;min-width:0;}
+  .pane.left{border-right:1px solid #e3e6ec;background:#fff;}
+  .pane-hd{
+    padding:11px 18px;font-size:12.5px;font-weight:600;color:#5a6070;
+    background:#fafbfd;border-bottom:1px solid #eceff4;
+    display:flex;align-items:center;gap:10px;
+  }
+  .pane-hd .sp{margin-left:auto;font-weight:400;color:#9aa0ae;font-size:11.5px;}
+  textarea#src{
+    flex:1;border:0;outline:none;resize:none;padding:16px 18px;
+    font-size:14.5px;line-height:1.75;font-family:inherit;color:#22262e;
+  }
+  .left-ft{
+    border-top:1px solid #eceff4;padding:11px 16px;
+    display:flex;gap:8px;align-items:center;background:#fafbfd;flex-wrap:wrap;
+  }
+  button{
+    font-family:inherit;font-size:12.5px;cursor:pointer;
+    border:1px solid #d4d9e2;background:#fff;color:#39404e;
+    padding:6px 13px;border-radius:5px;transition:.15s;white-space:nowrap;
+  }
+  button:hover:not(:disabled){background:#f0f2f6;border-color:#c3cad6;}
+  button.pri{background:#2f6df6;border-color:#2f6df6;color:#fff;}
+  button.pri:hover:not(:disabled){background:#2559d0;border-color:#2559d0;}
+  button.warn{color:#c0392b;border-color:#e6c3bd;}
+  button.warn:hover:not(:disabled){background:#fdf3f1;}
+  button:disabled{opacity:.45;cursor:not-allowed;}
+  button.rec-on{background:#e04b3a;border-color:#e04b3a;color:#fff;}
+  button.rec-on:hover:not(:disabled){background:#c93e2e;border-color:#c93e2e;}
+  button.mini{padding:3px 8px;font-size:11px;}
+
+  .ctrl{
+    padding:11px 18px;background:#fafbfd;border-bottom:1px solid #eceff4;
+    display:flex;gap:13px;align-items:center;flex-wrap:wrap;
+  }
+  .fld{display:flex;align-items:center;gap:6px;font-size:12.5px;color:#5a6070;}
+  select,input[type=range]{
+    font-family:inherit;font-size:12.5px;color:#39404e;
+    border:1px solid #d4d9e2;border-radius:5px;padding:5px 7px;background:#fff;
+  }
+  select{max-width:210px;}
+  .val{font-variant-numeric:tabular-nums;min-width:34px;color:#2f6df6;font-weight:600;}
+  .divider{width:1px;height:20px;background:#e3e6ec;}
+
+  .list{flex:1;overflow-y:auto;padding:12px 16px 40px;}
+  .card{
+    display:flex;gap:11px;padding:9px 11px;border-radius:7px;
+    margin-bottom:5px;align-items:flex-start;transition:.15s;
+    border:1px solid transparent;
+  }
+  .card:hover{background:#f7f8fb;}
+  .card.on{background:#eaf1ff;border-color:#b9d0ff;}
+  .card .n{
+    flex:none;width:22px;height:22px;border-radius:50%;background:#eef0f5;
+    color:#8a90a0;font-size:11px;display:flex;align-items:center;
+    justify-content:center;margin-top:1px;font-variant-numeric:tabular-nums;
+  }
+  .card.on .n{background:#2f6df6;color:#fff;}
+  .card .body{flex:1;min-width:0;}
+  .card .txt{font-size:14.5px;line-height:1.7;color:#2a2f3a;word-break:break-word;cursor:pointer;}
+  .card.on .txt{color:#153a8a;font-weight:500;}
+  .card .ops{flex:none;display:flex;gap:4px;opacity:0;transition:.15s;}
+  .card:hover .ops,.card.on .ops{opacity:1;}
+
+  .recinfo{display:flex;align-items:center;gap:9px;margin-top:7px;}
+  .wave{width:170px;height:28px;background:#f2f4f8;border-radius:4px;flex:none;}
+  .meter{flex:1;max-width:200px;height:8px;background:#eef0f5;border-radius:4px;overflow:hidden;}
+  .meter i{display:block;height:100%;width:0;background:#e04b3a;transition:width .06s linear;}
+  .dur{font-size:11.5px;color:#7a8090;font-variant-numeric:tabular-nums;}
+  .dur b{color:#2f6df6;font-weight:600;}
+
+  /* 语调判定行 */
+  .toneline{
+    display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+    margin-top:6px;font-size:11.5px;color:#7a8090;
+  }
+  .toneline .tone{font-size:14px;line-height:1;}
+  .toneline .ok{color:#1a7f42;}
+  .toneline .bad{color:#c0392b;}
+  .toneline .mut{color:#9aa0ae;}
+  .toneline button{margin-left:2px;}
+  .pitchbox{margin-top:7px;}
+  .pitchbox canvas{
+    display:block;width:100%;height:80px;
+    background:#f8fafd;border:1px solid #eef1f6;border-radius:5px;
+  }
+  .pitchbox .pnote{font-size:10.5px;color:#a8aeba;margin-top:4px;}
+
+  .empty{padding:50px 20px;text-align:center;color:#9aa0ae;font-size:13.5px;line-height:2;}
+  .empty b{color:#5a6070;}
+  .status{
+    padding:9px 18px;font-size:12px;color:#7a8090;background:#fff;
+    border-top:1px solid #eceff4;display:flex;align-items:center;gap:8px;
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:#c9cfda;flex:none;}
+  .dot.live{background:#2f6df6;animation:pulse 1.2s infinite;}
+  .dot.rec{background:#e04b3a;animation:pulse .9s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+  .badge{font-size:11px;padding:2px 7px;border-radius:4px;background:#eef0f5;color:#7a8090;}
+  .badge.ok{background:#e6f6ec;color:#1a7f42;}
+  .badge.bad{background:#fdecea;color:#c0392b;}
+
+  /* ---------- 语音标注 ---------- */
+  .legend{
+    padding:7px 18px;background:#fff;border-bottom:1px solid #eceff4;
+    display:flex;gap:13px;flex-wrap:wrap;font-size:11.5px;color:#7a8090;align-items:center;
+  }
+  .legend .hint{margin-left:auto;color:#9aa0ae;}
+  .lg-focus{color:#0d47a1;font-weight:800;font-size:13px;}
+  .lg-stress{color:#2a2f3a;font-weight:600;}
+  .lg-weak{color:#a8aeba;}
+  .sent{font-size:14.5px;line-height:2.2;cursor:pointer;}
+  .w{border-radius:3px;padding:1px 1px;transition:.12s;display:inline-block;}
+  .w:hover{background:#dfe7f7;box-shadow:0 0 0 2px #dfe7f7;}
+  .w.focus{font-weight:800;color:#0d47a1;font-size:16.5px;}
+  .w.stress{font-weight:600;color:#2a2f3a;}
+  .w.weak{color:#a8aeba;font-weight:400;}
+  .punc{color:#5a6070;}
+  .link{color:#d98c2b;font-size:11px;font-weight:700;padding:0 1px;}
+  .chunk{color:#c0392b;font-weight:800;padding:0 2px;}
+  .tone{color:#1a7f42;font-weight:800;font-size:15px;padding-left:4px;}
+  .pitchbox{margin-top:1px;}
+  .pitch{display:block;opacity:.75;}
+
+  /* ===== 题库 ===== */
+  button.bank-btn{background:#eef3ff;border-color:#c7d7fb;color:#2f5fd0;font-weight:600;}
+  button.bank-btn:hover:not(:disabled){background:#e2ebfd;border-color:#a9c2f7;}
+
+  .drawer-mask{position:fixed;inset:0;background:rgba(20,24,33,.26);z-index:40;}
+  .drawer{
+    position:fixed;left:0;top:0;bottom:0;width:436px;max-width:93vw;
+    background:#fff;z-index:41;display:flex;flex-direction:column;
+    box-shadow:8px 0 30px rgba(20,24,33,.15);
+  }
+  .drawer-hd{padding:13px 16px;border-bottom:1px solid #eceff4;display:flex;align-items:center;gap:9px;}
+  .drawer-hd b{font-size:14px;}
+  .drawer-sub{font-size:11.5px;color:#9aa0ae;}
+  .drawer-hd .x{margin-left:auto;}
+  .drawer-search{padding:10px 16px 2px;}
+  .drawer-search input{
+    width:100%;padding:7px 10px;border:1px solid #dfe4ec;border-radius:6px;
+    font-size:12.5px;font-family:inherit;outline:none;color:#22262e;
+  }
+  .drawer-search input:focus{border-color:#2f6df6;}
+  .drawer-tabs{display:flex;gap:6px;padding:9px 16px 6px;flex-wrap:wrap;}
+  .drawer-tabs button{padding:4px 10px;font-size:11.5px;border-radius:14px;}
+  .drawer-tabs button.on{background:#2f6df6;border-color:#2f6df6;color:#fff;}
+  .bank-list{flex:1;overflow-y:auto;padding:2px 10px 24px;}
+  .bank-grp{
+    margin:12px 6px 4px;font-size:11px;color:#9aa0ae;font-weight:700;
+    letter-spacing:.4px;position:sticky;top:0;background:#fff;padding:4px 0 3px;
+  }
+  .bank-item{
+    padding:7px 9px;border-radius:6px;cursor:pointer;
+    display:flex;gap:8px;align-items:flex-start;border:1px solid transparent;
+  }
+  .bank-item:hover{background:#f4f7fe;}
+  .bank-item.on{background:#eef3ff;border-color:#c7d7fb;}
+  .bank-item .num{font-size:11px;color:#b0b6c2;min-width:15px;padding-top:2px;text-align:right;}
+  .bank-item .tt{font-size:13px;color:#22262e;line-height:1.4;min-width:0;}
+  .bank-item .tt small{display:block;color:#8d94a3;font-size:11.5px;margin-top:2px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .bank-item .cnt{margin-left:auto;font-size:11px;color:#b0b6c2;white-space:nowrap;padding-top:3px;}
+  .bank-empty{padding:36px 16px;text-align:center;color:#a6adba;font-size:12.5px;line-height:1.8;}
+
+  /* 题卡 */
+  .qcard{border-bottom:1px solid #eceff4;background:#fbfcfe;display:flex;flex-direction:column;max-height:40vh;}
+  .qcard-hd{padding:8px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px dashed #e6eaf1;flex:0 0 auto;}
+  .qtag{font-size:10.5px;font-weight:800;color:#fff;background:#2f6df6;padding:2px 6px;border-radius:3px;letter-spacing:.3px;}
+  .qtag.p2{background:#7a5af8;}
+  .qcard-hd b{font-size:13px;color:#22262e;}
+  .qmeta{font-size:11px;color:#9aa0ae;}
+  .qcard-ops{margin-left:auto;display:flex;gap:5px;}
+  .qcard-bd{padding:9px 16px 13px;overflow-y:auto;font-size:12.8px;line-height:1.75;color:#3a4150;}
+  .qcard-bd .cue{color:#1a1d24;font-weight:600;margin-bottom:3px;}
+  .qcard-bd ul{margin:3px 0 0;padding-left:17px;}
+  .qcard-bd li{margin:1px 0;}
+  .qcard-bd .ph{color:#98a0b0;font-size:10.5px;font-weight:800;letter-spacing:.5px;margin:9px 0 2px;}
+
+  /* 参考答案 */
+  .qcard.withans{max-height:66vh;}
+  .qcard.withans .qcard-bd{flex:1 1 auto;min-height:0;}
+  .ans{border-top:1px solid #e8ecf3;background:#fff;display:flex;flex-direction:column;
+    flex:0 0 auto;max-height:46%;min-height:0;}
+  .ans-hd{padding:6px 16px;display:flex;align-items:center;gap:7px;flex:0 0 auto;
+    background:#f6f8fc;font-size:11.5px;color:#7c8598;}
+  .ans-hd>b{font-size:12px;color:#2b3140;}
+  .ans-hd .mat{background:#eef3ff;color:#2f6df6;border-radius:3px;padding:1px 5px;
+    font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:42%;}
+  .ans-ops{margin-left:auto;display:flex;gap:5px;}
+  .ans-bd{overflow-y:auto;padding:8px 16px 14px;font-size:12.8px;line-height:1.8;color:#2b3242;}
+  .ar{margin:0 0 10px;padding-left:8px;border-left:2px solid #e6ebf4;}
+  .ar:last-child{margin-bottom:0;}
+  .aq{color:#8a91a1;font-size:11.5px;line-height:1.55;display:flex;gap:5px;align-items:flex-start;}
+  .aa{color:#1c222e;}
+  .pv{flex:0 0 auto;font-size:9px;padding:0 4px;height:15px;line-height:15px;border-radius:3px;
+    border:1px solid #dde3ee;background:#fff;color:#5b6478;cursor:pointer;}
+  .pv:hover{border-color:#2f6df6;color:#2f6df6;}
+  .p2t{color:#1c222e;margin:0;}
+  /* ---------- 中文对照 ---------- */
+  .zhline{margin:0 0 10px;padding-left:8px;border-left:2px solid #e6ebf4;}
+  .zhline:last-child{margin-bottom:0;}
+  .zl-en{color:#1c222e;}
+  .zl-zh{color:#8b92a2;font-size:11.8px;line-height:1.7;margin-top:2px;}
+  .zl-zh::before{content:"中";display:inline-block;font-size:8.5px;font-weight:800;
+    color:#c2c8d4;margin-right:4px;vertical-align:1px;}
+  .ar .zl-zh{margin:2px 0 0;}
+  #zhBtn.on{background:#eef3ff;border-color:#cfe0fd;color:#2f6df6;}
+  #zhBtn:disabled{color:#c2c8d4;border-color:#eef1f6;background:#fafbfd;cursor:default;}
+  .bank-item .ok{color:#12a150;font-size:10px;font-weight:800;margin-left:4px;}
+  .ans-only{display:flex;align-items:center;gap:5px;padding:0 16px 7px;font-size:11.5px;
+    color:#7c8598;cursor:pointer;user-select:none;}
+</style>
+</head>
+<body data-page-node-id="rAQUU2s19dFQIKzINcXDIB">
+<header data-page-node-id="llhus72dlkUJVZG8HRVGQQ">
+  <h1 data-page-node-id="eizSLvJ2HH1AWHIvvXRFEy">雅思口语跟读器</h1>
+  <span class="sub" data-page-node-id="QKF2u42S8ekDDYY5LHT5Ej">美式发音 · 逐句跟读 · 录音对比</span>
+  <span class="head-tip" data-page-node-id="yzKG97V5Ta41KGhTXvijgg">建议用 Edge 打开（美式神经语音最自然）</span>
+</header>
+
+<div class="wrap" data-page-node-id="CEOasx0rC2U8KmHbNf1OOm">
+  <div class="pane left" data-page-node-id="xFqza00EmBcG89pMRZ5HqP">
+    <div class="pane-hd" data-page-node-id="JDOCMzpIucHD9VqXPDkG1z">1. 粘贴你的口语答案<span class="sp" id="statSrc" data-page-node-id="NEzhEW7EVfT0Hq9yr3wO8u">0 字</span></div>
+    <div class="qcard" id="qcard" hidden>
+      <div class="qcard-hd">
+        <span class="qtag" id="qTag">P1</span>
+        <b id="qTitle"></b>
+        <span class="qmeta" id="qMeta"></span>
+        <span class="qcard-ops">
+          <button class="mini" id="qAnsBtn" hidden>参考答案</button>
+          <button class="mini" id="qRead" title="用考官口吻把题目读一遍">朗读题目</button>
+          <button class="mini" id="qClose">收起</button>
+        </span>
+      </div>
+      <div class="qcard-bd" id="qBody"></div>
+      <div class="ans" id="qAns" hidden>
+        <div class="ans-hd">
+          <b>参考答案</b>
+          <span class="mat" id="ansMat" hidden></span>
+          <span class="ans-ops">
+            <button class="mini" id="zhBtn" title="显示 / 隐藏逐句中文对照">中文</button>
+            <button class="mini" id="ansFill">填入答案</button>
+            <button class="mini" id="ansP3" hidden>只填 P3</button>
+          </span>
+        </div>
+        <div class="ans-bd" id="ansBody"></div>
+      </div>
+    </div>
+    <textarea id="src" placeholder="把整理好的雅思口语答案粘贴到这里&#10;&#10;支持整篇粘贴，会自动按句切分。&#10;点上方「载入示例」可以看效果。"></textarea>
+    <div class="left-ft">
+      <button class="bank-btn" id="btnBank">📚 题库</button>
+      <button class="pri" id="btnParse">生成跟读卡片</button>
+      <button id="btnDemo">载入示例</button>
+      <button id="btnClear" class="warn">清空</button>
+      <span class="badge" id="voiceBadge">语音未就绪</span>
+    </div>
+  </div>
+
+  <div class="pane right">
+    <div class="pane-hd">2. 逐句跟读 + 录音对比<span class="sp" id="statCard">0 句</span></div>
+    <div class="ctrl">
+      <button class="pri" id="btnPlay">整篇播放</button>
+      <button id="btnPause" disabled>暂停</button>
+      <button id="btnStop" disabled>停止</button>
+      <div class="divider"></div>
+      <div class="fld">音色
+        <select id="voice"></select>
+        <button id="btnReload" title="重新加载语音列表">刷新</button>
+        <button id="btnTest" title="用当前音色说一句话，先确认能不能出声">试听</button>
+      </div>
+      <div class="fld">语速
+        <input type="range" id="rate" min="0.6" max="1.4" step="0.05" value="0.95">
+        <span class="val" id="rateVal">0.95</span>
+      </div>
+      <div class="fld">跟读停顿
+        <input type="range" id="gap" min="0" max="4" step="0.25" value="2">
+        <span class="val" id="gapVal">2s</span>
+      </div>
+      <div class="divider"></div>
+      <label class="fld" style="cursor:pointer"><input type="checkbox" id="annoOn" checked> 语音标注</label>
+      <label class="fld" style="cursor:pointer" title="朗读时在意群处插入停顿，节奏更贴近标注"><input type="checkbox" id="rhythmOn"> 按标注朗读</label>
+      <span class="badge" id="micBadge">麦克风未检测</span>
+    </div>
+    <div class="legend" id="legend">
+      <span><b class="lg-focus">Actually</b> 句子重音</span>
+      <span><b class="lg-stress">really</b> 词重音</span>
+      <span><b class="lg-weak">to</b> 弱读</span>
+      <span><b class="chunk">|</b> 意群停顿</span>
+      <span><b class="link">‿</b> 连读</span>
+      <span><b class="tone">↘</b>降调 <b class="tone">↗</b>升调 <b class="tone">→</b>延续</span>
+      <span class="hint">点单词可切换重读 / 弱读</span>
+    </div>
+    <div class="list" id="list"></div>
+    <div class="status"><span class="dot" id="dot"></span><span id="statusTxt">准备就绪</span></div>
+  </div>
+</div>
+
+<div class="drawer-mask" id="bankMask" hidden></div>
+<aside class="drawer" id="bankDrawer" hidden>
+  <div class="drawer-hd">
+    <b>口语题库</b>
+    <span class="drawer-sub" id="bankStat">2026 年 9-12 月</span>
+    <button class="mini x" id="bankClose">关闭</button>
+  </div>
+  <div class="drawer-search">
+    <input id="bankQ" placeholder="搜话题或题目内容，中英文都行">
+  </div>
+  <label class="ans-only"><input type="checkbox" id="bankOnlyAns"> 只看已写答案的（共 <span id="ansCount">0</span> 个）</label>
+  <div class="drawer-tabs" id="bankTabs"></div>
+  <div class="bank-list" id="bankList"></div>
+</aside>
+
+<script src="题库数据.js"></script>
+<script src="答案数据.js"></script>
+<script src="中文译文.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const src = $('#src'), list = $('#list'), voiceSel = $('#voice');
+const rateEl = $('#rate'), rateVal = $('#rateVal'), gapEl = $('#gap'), gapVal = $('#gapVal');
+const btnPlay = $('#btnPlay'), btnPause = $('#btnPause'), btnStop = $('#btnStop');
+const dot = $('#dot'), statusTxt = $('#statusTxt');
+const statSrc = $('#statSrc'), statCard = $('#statCard');
+const voiceBadge = $('#voiceBadge'), micBadge = $('#micBadge');
+
+let sents = [], cards = [], opsRef = [], voices = [], curVoice = null;
+let playing = false, cancelled = false, paused = false;
+let curUtt = null;   // 持有 utterance 引用：Safari 会 GC 掉局部变量导致 onend 永不触发
+let mode = 'all', curIdx = -1;
+let gapTimer = null, gapRemain = 0, gapStartAt = 0, inGap = false, pauseWorks = true;
+let ttsDur = {};
+let speakTimer = null, uttStarted = false, fallbackDepth = 0;   // 无声自检与自动降级
+
+/* ============ 录音相关 ============ */
+let rec = {};                 // idx -> {url, blob, dur, peaks}
+let mediaRec = null, recStream = null, recIdx = -1, recChunks = [], recStartAt = 0, recTick = null;
+let audioCtx = null, analyser = null, meterRaf = 0, meterFill = null;
+let myAudio = null;
+
+const DEMO = `Part 1 - Hometown
+Actually, I come from a medium-sized city in the south of China, and I've been living there for pretty much my whole life. What I like most about it is the pace of life, because it's much more relaxed than in a big city like Shanghai. To be honest, the one thing I'd probably change is the public transport, since it can get really crowded during rush hour.
+
+Part 2 - Describe a book you enjoyed reading
+I'd like to talk about a book called "Sapiens", which is a brief history of humankind. I first came across it when a friend recommended it to me a couple of years ago, and I finished it in about two weeks. Basically, it explains how our species managed to dominate the planet, and what really struck me was the author's perspective on money and happiness. I found it fascinating because it challenged a lot of assumptions I'd never really questioned before. Overall, I'd say it's the kind of book that genuinely changes the way you look at the world.`;
+
+function getAudioCtx(){
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function pickMime(){
+  const list = ['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'];
+  for (const t of list){ try { if (MediaRecorder.isTypeSupported(t)) return t; } catch(e){} }
+  return '';
+}
+
+/* ============ 语调分析 ============ */
+/* 录完一句顺手算音高曲线，用来判这句的句末到底是升还是降。
+   用 YIN 提取基频 + 降采样到 8k：纯自相关会把音高算成一半或两倍（实测 P90 误差 50%），
+   8k 下 YIN 中位误差 0.3%，而成本只有 44.1k 的 1/18，一句 3 秒音频几毫秒就算完。 */
+const Pitch = (() => {
+  const SR8 = 8000, WIN8 = 200, HOP8 = 80;
+  const FMIN = 75, FMAX = 500, F_REF = 100;
+  const SIL_MS = 200, TAIL_MS = 400, MIN_SEG = 250;
+
+  /* 重采样：移动平均低通（防混叠）+ 线性插值，比例可以是小数 */
+  function resample(src, from, to) {
+    const k = from / to;
+    const w = Math.max(1, Math.round(k));
+    const lp = new Float32Array(src.length);
+    let acc = 0;
+    for (let i = 0; i < src.length; i++) {
+      acc += src[i];
+      if (i >= w) acc -= src[i - w];
+      lp[i] = acc / Math.min(i + 1, w);
+    }
+    const outN = Math.floor(src.length / k);
+    const out = new Float32Array(outN);
+    for (let i = 0; i < outN; i++) {
+      const p = i * k, i0 = Math.floor(p), f = p - i0;
+      out[i] = (lp[i0] || 0) * (1 - f) + (lp[i0 + 1] || 0) * f;
+    }
+    return out;
+  }
+
+  /* YIN：累积均值归一化差分 + 绝对阈值 + 抛物线插值 */
+  function yin(frame, sr) {
+    const W = frame.length;
+    let energy = 0;
+    for (let i = 0; i < W; i++) energy += frame[i] * frame[i];
+    const rms = Math.sqrt(energy / W);
+    if (rms < 0.008) return { f0: null, rms };
+
+    const tauMin = Math.max(2, Math.floor(sr / FMAX));
+    const tauMax = Math.min(Math.floor(sr / FMIN), Math.floor(W / 2));
+    const half = W - tauMax;
+    if (half < 16 || tauMax <= tauMin + 2) return { f0: null, rms };
+
+    const d = new Float32Array(tauMax + 1);
+    for (let tau = tauMin; tau <= tauMax; tau++) {
+      let s = 0;
+      for (let j = 0; j < half; j++) { const df = frame[j] - frame[j + tau]; s += df * df; }
+      d[tau] = s;
+    }
+    const cm = new Float32Array(tauMax + 1);
+    let running = 0;
+    cm[tauMin] = 1;
+    for (let tau = tauMin; tau <= tauMax; tau++) {
+      running += d[tau];
+      cm[tau] = running > 0 ? d[tau] * (tau - tauMin + 1) / running : 1;
+    }
+    let bestTau = -1;
+    for (let tau = tauMin + 1; tau < tauMax; tau++) {
+      if (cm[tau] < 0.15) {
+        while (tau + 1 < tauMax && cm[tau + 1] < cm[tau]) tau++;
+        bestTau = tau; break;
+      }
+    }
+    if (bestTau < 0) {
+      let mn = Infinity;
+      for (let tau = tauMin + 1; tau < tauMax; tau++) if (cm[tau] < mn) { mn = cm[tau]; bestTau = tau; }
+      if (bestTau < 0 || mn > 0.7) return { f0: null, rms };
+    }
+    let t = bestTau;
+    if (t > tauMin && t < tauMax) {
+      const y0 = cm[t - 1], y1 = cm[t], y2 = cm[t + 1];
+      const den = 2 * (2 * y1 - y0 - y2);
+      if (den !== 0) t += (y2 - y0) / den;
+    }
+    return { f0: sr / t, rms };
+  }
+
+  /* 八度跳变修正：说话不会整八度地跳，±12 半音的突变基本都是弱起弱收处把基频算错了一半/两倍 */
+  function fixOctaves(pts) {
+    let last = null;
+    for (const p of pts) {
+      if (p.f0 == null) continue;
+      if (last) {
+        const ratio = 12 * Math.log2(p.f0 / last);
+        const oct = Math.round(ratio / 12);
+        if (oct !== 0 && Math.abs(ratio - oct * 12) < 1.5) p.f0 = p.f0 / Math.pow(2, oct);
+      }
+      last = p.f0;
+    }
+  }
+
+  /* 3 点中值滤波：只削孤立尖刺，不削弱真实音高走向 */
+  function medFilter3(pts) {
+    const src = pts.map(p => p.f0);
+    for (let i = 1; i < pts.length - 1; i++) {
+      const a = src[i - 1], b = src[i], c = src[i + 1];
+      if (a == null || b == null || c == null) continue;
+      pts[i].f0 = Math.max(Math.min(a, b), Math.min(Math.max(a, b), c));
+    }
+  }
+
+  /* 按静音切段（一句里可能有意群停顿） */
+  function segment(pts) {
+    const segs = [];
+    let cur = null, sil = 0;
+    for (let i = 0; i < pts.length; i++) {
+      const p = pts[i];
+      if (p.f0 != null) {
+        if (!cur) cur = { a: p.ms, pts: [] };
+        cur.pts.push(p);
+        sil = 0;
+      } else if (cur) {
+        sil += (i > 0 ? pts[i].ms - pts[i - 1].ms : 10);
+        if (sil >= SIL_MS) {
+          cur.b = cur.pts[cur.pts.length - 1].ms;
+          segs.push(cur); cur = null; sil = 0;
+        }
+      }
+    }
+    if (cur) { cur.b = cur.pts[cur.pts.length - 1].ms; segs.push(cur); }
+    return segs.filter(s => {
+      if (s.b - s.a < MIN_SEG) return false;
+      const f = s.pts.map(p => p.f0);
+      const mean = f.reduce((a, b) => a + b, 0) / f.length;
+      if (!mean) return false;
+      const sd = Math.sqrt(f.reduce((a, b) => a + (b - mean) ** 2, 0) / f.length);
+      return sd / mean < 0.18;                      // 音高乱跳＝噪声
+    });
+  }
+
+  /* 段末 400ms 的最小二乘斜率 → 半音总变化。拿首末帧相减会被抖动带偏 */
+  function tailTrend(seg) {
+    const tail = seg.pts.filter(p => p.ms >= seg.b - TAIL_MS);
+    if (tail.length < 4) return { semi: 0, dir: 'na' };
+    const f1 = tail[0].f0;
+    const xs = tail.map(p => (p.ms - tail[0].ms) / 1000);
+    const ys = tail.map(p => 12 * Math.log2(p.f0 / f1));
+    const mx = xs.reduce((a, b) => a + b, 0) / xs.length;
+    const my = ys.reduce((a, b) => a + b, 0) / ys.length;
+    let num = 0, den = 0;
+    for (let k = 0; k < xs.length; k++) { num += (xs[k] - mx) * (ys[k] - my); den += (xs[k] - mx) ** 2; }
+    const slope = den ? num / den : 0;
+    const semi = slope * (xs[xs.length - 1] - xs[0]);
+    const dir = semi > 1.0 ? 'up' : semi < -1.0 ? 'down'
+      : Math.abs(semi) < 0.5 ? 'flat' : (semi > 0 ? 'slight-up' : 'slight-down');
+    return { semi, dir };
+  }
+
+  function analyze(ab) {
+    const raw = ab.getChannelData(0);
+    const ds = resample(raw, ab.sampleRate, SR8);
+    const pts = [];
+    for (let s = 0; s + WIN8 <= ds.length; s += HOP8) {
+      const r = yin(ds.subarray(s, s + WIN8), SR8);
+      pts.push({ ms: Math.round(s / SR8 * 1000), f0: r.f0, rms: r.rms });
+    }
+    if (!pts.length) return null;
+    fixOctaves(pts);
+    medFilter3(pts);
+    const segs = segment(pts).map(s => {
+      const tr = tailTrend(s);
+      return { a: s.a, b: s.b, semi: tr.semi, dir: tr.dir, pts: s.pts };
+    });
+
+    const voiced = pts.filter(p => p.f0 != null).map(p => p.f0).sort((a, b) => a - b);
+    const med = voiced.length ? voiced[Math.floor(voiced.length / 2)] : 0;
+    const p5 = voiced.length ? voiced[Math.floor(voiced.length * 0.05)] : 0;
+    const p95 = voiced.length ? voiced[Math.floor(voiced.length * 0.95)] : 0;
+    const voicedMs = segs.reduce((a, s) => a + (s.b - s.a), 0);
+    const last = segs.length ? segs[segs.length - 1] : null;
+
+    return {
+      pts, segs, dur: ab.duration,
+      hasVoice: segs.length > 0,
+      lastDir: last ? last.dir : 'na',
+      lastSemi: last ? last.semi : 0,
+      medianF0: med, p5, p95,
+      rangeSemis: (p5 && p95) ? 12 * Math.log2(p95 / p5) : 0,
+      voicedRatio: ab.duration > 0 ? voicedMs / 1000 / ab.duration : 0
+    };
+  }
+
+  return { analyze, TAIL_MS };
+})();
+
+function extractPeaks(ab, n){
+  const ch = ab.getChannelData(0);
+  const step = Math.floor(ch.length / n) || 1;
+  const out = [];
+  for (let i = 0; i < n; i++){
+    let m = 0;
+    const s = i * step, e = Math.min(ch.length, s + step);
+    for (let j = s; j < e; j++){ const v = Math.abs(ch[j]); if (v > m) m = v; }
+    out.push(m);
+  }
+  return out;
+}
+
+function drawWave(cv, peaks, color){
+  const g = cv.getContext('2d');
+  const w = cv.width, h = cv.height;
+  g.clearRect(0, 0, w, h);
+  if (!peaks || !peaks.length) return;
+  const bw = w / peaks.length;
+  g.fillStyle = color;
+  peaks.forEach((p, i) => {
+    const bh = Math.max(2, p * h * 0.9);
+    g.fillRect(i * bw, (h - bh) / 2, Math.max(1, bw - 1), bh);
+  });
+}
+
+async function analyseBlob(blob){
+  try {
+    const ctx = getAudioCtx();
+    const buf = await blob.arrayBuffer();
+    const ab = await ctx.decodeAudioData(buf);
+    // 一次解码同时拿波形和音高，省一次 decodeAudioData
+    let pitch = null;
+    try { pitch = Pitch.analyze(ab); } catch(e){ pitch = null; }
+    return { dur: ab.duration, peaks: extractPeaks(ab, 68), pitch: pitch };
+  } catch(e){
+    return { dur: 0, peaks: null, pitch: null };
+  }
+}
+
+function startMeter(stream){
+  const ctx = getAudioCtx();
+  const node = ctx.createMediaStreamSource(stream);
+  analyser = ctx.createAnalyser();
+  analyser.fftSize = 512;
+  node.connect(analyser);
+  const data = new Uint8Array(analyser.fftSize);
+  const tick = () => {
+    analyser.getByteTimeDomainData(data);
+    let peak = 0;
+    for (let i = 0; i < data.length; i++){ const v = Math.abs(data[i] - 128) / 128; if (v > peak) peak = v; }
+    if (meterFill) meterFill.style.width = Math.min(100, peak * 190) + '%';
+    meterRaf = requestAnimationFrame(tick);
+  };
+  tick();
+}
+
+let starting = false;
+/* 麦克风连接常驻复用。
+   原来每次点「录音」都重新 getUserMedia，并且在录音结束时把 track 全 stop 掉，
+   于是下次又要重新申请 —— 浏览器对 file:// 打开的页面无法记住授权，就变成每次都弹框。
+   改成：整页只申请一次，录音只开关 MediaRecorder，连接一直留着。 */
+let micStream = null;
+
+async function ensureMic(){
+  if (micStream){
+    const live = micStream.getAudioTracks().some(t => t.readyState === 'live');
+    if (live) return micStream;
+    micStream = null;                 // 设备被拔掉 / 被系统收回 → 重新申请
+  }
+  micStream = await navigator.mediaDevices.getUserMedia({
+    audio: { echoCancellation: true, noiseSuppression: true }
+  });
+  return micStream;
+}
+
+// 关掉页面时才真正释放麦克风（这时系统指示灯也会灭）
+window.addEventListener('pagehide', () => {
+  if (micStream){ try { micStream.getTracks().forEach(t => t.stop()); } catch(e){} micStream = null; }
+});
+
+async function startRec(i){
+  if (starting) return;
+  if (recIdx >= 0) stopRec(false);
+  stopAll();
+  starting = true;
+  let stream = null;
+  try {
+    stream = await ensureMic();
+  } catch(e){
+    starting = false;
+    micStream = null;
+    setStatus('麦克风没开：请在浏览器地址栏允许麦克风权限后重试');
+    micBadge.textContent = '麦克风被拒绝'; micBadge.className = 'badge bad';
+    return;
+  }
+  starting = false;
+  recStream = stream;
+  micBadge.textContent = '麦克风正常'; micBadge.className = 'badge ok';
+  const mime = pickMime();
+  let mr = null;
+  try { mr = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined); }
+  catch(e){
+    try { mr = new MediaRecorder(stream); }
+    catch(e2){ setStatus('浏览器不支持录音'); return; }
+  }
+  mediaRec = mr;
+  const chunks = [];
+  recChunks = chunks;
+  mr.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  mr.onstop = async () => {
+    cancelAnimationFrame(meterRaf);
+    // 故意不 stop track：保留麦克风连接，下次录音不再弹权限框
+    if (recStream === stream) recStream = null;
+    const idx = i;                       // 闭包捕获，避免连点录音时串号
+    if (recIdx === i) recIdx = -1;
+    const blob = new Blob(chunks, { type: mr.mimeType || 'audio/webm' });
+    if (!blob.size){ updateRecInfo(idx); setStatus('没录到声音，检查一下麦克风'); return; }
+    const info = await analyseBlob(blob);
+    rec[idx] = { url: URL.createObjectURL(blob), blob: blob, dur: info.dur, peaks: info.peaks, pitch: info.pitch };
+    updateRecInfo(idx);
+    setStatus('录好了 · 我的 ' + info.dur.toFixed(1) + 's，正在播放对比');
+    setTimeout(() => compare(idx), 350);
+  };
+  mediaRec.start();
+  recIdx = i;
+  recStartAt = Date.now();
+  hl(i);
+  updateRecInfo(i);
+  startMeter(recStream);
+  dot.className = 'dot rec';
+  recTick = setInterval(() => {
+    const b = opsRef[i] && opsRef[i].rec;
+    if (b) b.textContent = '停 ' + ((Date.now() - recStartAt) / 1000).toFixed(1) + 's';
+  }, 100);
+  setStatus('正在录音：' + sents[i].slice(0, 26) + '...', false);
+  dot.className = 'dot rec';
+}
+
+function stopRec(finish){
+  if (recTick){ clearInterval(recTick); recTick = null; }
+  if (mediaRec && mediaRec.state !== 'inactive') mediaRec.stop();
+  else {
+    cancelAnimationFrame(meterRaf);
+    // 同样不 stop track，连接留着复用
+    recStream = null; recIdx = -1;
+  }
+  dot.className = 'dot';
+}
+
+function playMine(i){
+  if (!rec[i]) return;
+  stopAll();
+  if (myAudio) myAudio.pause();
+  hl(i);
+  myAudio = new Audio(rec[i].url);
+  myAudio.onended = () => { clearHL(); setStatus('我的录音播完了'); };
+  myAudio.play();
+  setStatus('播放你的录音（第 ' + (i + 1) + ' 句）');
+}
+
+function compare(i){
+  if (!rec[i]){ setStatus('先点「录音」录一句，再对比'); return; }
+  stopAll();
+  cancelled = false;
+  hl(i);
+  setStatus('对比 · 先听标准发音', true);
+  const t0 = Date.now();
+  const u = mkUtt(i);
+  curUtt = u;
+  u.onend = () => {
+    curUtt = null;
+    if (cancelled) return;
+    ttsDur[i] = (Date.now() - t0) / 1000;
+    updateRecInfo(i);
+    setStatus('对比 · 现在听你自己的', false);
+    setTimeout(() => {
+      if (cancelled) return;
+      if (myAudio) myAudio.pause();
+      myAudio = new Audio(rec[i].url);
+      myAudio.onended = () => {
+        clearHL();
+        const d = rec[i].dur - (ttsDur[i] || 0);
+        setStatus('对比结束 · 原声 ' + (ttsDur[i] || 0).toFixed(1) + 's / 我的 ' + rec[i].dur.toFixed(1) + 's');
+      };
+      myAudio.play();
+    }, 800);
+  };
+  u.onerror = () => { if (cancelled) return; setStatus('朗读出错，换个音色试试'); };
+  speechSynthesis.speak(u);
+}
+
+/* ============ 语音列表 ============ */
+function scoreVoice(v){
+  const n = (v.name || '').toLowerCase();
+  let s = 0;
+  // Windows / Edge：在线神经语音
+  if (/natural|neural|online/.test(n)) s += 10;
+  if (/aria|ava|jenny|guy|andrew|emma|brian/.test(n)) s += 5;
+  if (/zira|david|mark|hazel/.test(n)) s += 1;
+  // macOS：增强 / 高级语音（需在系统设置里另外下载）
+  if (/enhanced|premium|siri/.test(n)) s += 10;
+  if (/samantha|evan|tom|zoe|alex|allison|susan/.test(n)) s += 3;
+  return s;
+}
+
+// Apple 的恶搞 / 低质量音色，直接屏蔽，免得下拉框里一堆垃圾
+const BLOCK_RE = /eloquence|bad news|good news|bahh|bells|boing|bubbles|cellos|deranged|jester|organ|superstar|trinoids|wobble|zarvox|whisper|albert/i;
+// Safari 拿不到系统下载的高质量语音，音色天花板低，要提示换 Edge
+const IS_SAFARI = /^((?!chrome|android|crios|edg|fxios).)*safari/i.test(navigator.userAgent || '');
+// 在软件自带预览窗口 / iframe 里，语音合成多半被静默拦截
+const NESTED = (() => { try { return window.self !== window.top; } catch(e){ return true; } })();
+let warmed = false;
+
+// Edge for Mac 的 known bug：初次只给 18 个自然语音，播过一次后才展开到 250+
+function maybeWarmUp(){
+  if (warmed) return;
+  warmed = true;
+  setTimeout(() => {
+    const before = voices.length;
+    fillVoices();
+    if (voices.length > before){
+      setStatus('已载入更多音色（共 ' + voices.length + ' 个）→ 去「音色」下拉框挑更自然的');
+    }
+  }, 700);
+}
+
+// 记住上一次选的音色：在线音色在某些网络下不出声，换过一次就不必每次重挑
+const VOICE_KEY = 'ielts.follow.voice';
+function saveVoice(v){ try { if (v && v.name) localStorage.setItem(VOICE_KEY, v.name); } catch(e){} }
+function loadVoiceName(){ try { return localStorage.getItem(VOICE_KEY) || ''; } catch(e){ return ''; } }
+
+function fillVoices(){
+  const prevName = curVoice ? curVoice.name : null;
+  const all = (speechSynthesis.getVoices() || []).filter(v => !BLOCK_RE.test(v.name || ''));
+  const us = all.filter(v => /^en[-_]us/i.test(v.lang));
+  const otherEn = all.filter(v => /^en/i.test(v.lang) && us.indexOf(v) === -1);
+  us.sort((a, b) => scoreVoice(b) - scoreVoice(a));
+  voices = us.concat(otherEn);
+  voiceSel.innerHTML = '';
+  if (!voices.length){
+    voiceSel.innerHTML = '<option value="-1">未检测到英语语音</option>';
+    voiceBadge.textContent = '无英语语音'; voiceBadge.className = 'badge';
+    return;
+  }
+  voices.forEach((v, i) => {
+    const o = document.createElement('option');
+    o.value = i;
+    o.textContent = v.name + '  ·  ' + v.lang;
+    voiceSel.appendChild(o);
+  });
+  let idx = 0;                                  // 刷新时保留当前选中的音色
+  const want = prevName || loadVoiceName();     // 其次用上次记住的音色
+  if (want){
+    const k = voices.findIndex(v => v.name === want);
+    if (k >= 0) idx = k;
+  }
+  voiceSel.selectedIndex = idx;
+  curVoice = voices[idx];
+  const n = (curVoice.name || '').toLowerCase();
+  if (NESTED){
+    voiceBadge.textContent = '预览窗口 · 语音可能不出声';
+    voiceBadge.className = 'badge bad';
+    voiceBadge.title = '你现在是在嵌套窗口里。请用 Edge 直接打开「yasigendu.html」这个文件，语音才正常';
+  } else if (IS_SAFARI){
+    voiceBadge.textContent = '建议换 Edge 打开';
+    voiceBadge.className = 'badge bad';
+    voiceBadge.title = 'Safari 读不到系统下载的高质量语音，音色偏机械；换 Edge 可免费用微软神经语音';
+  } else if (us.length && /natural|neural|online|enhanced|premium/.test(n)){
+    voiceBadge.textContent = '美式自然语音'; voiceBadge.className = 'badge ok'; voiceBadge.title = '';
+  } else if (us.length){
+    voiceBadge.textContent = '美式语音 · 普通'; voiceBadge.className = 'badge'; voiceBadge.title = '';
+  } else {
+    voiceBadge.textContent = '注意：非美式语音'; voiceBadge.className = 'badge'; voiceBadge.title = '';
+  }
+}
+
+/* ============ 断句 ============ */
+function splitSents(text){
+  const out = [];
+  text.split(/\n+/).forEach(p => {
+    p = p.trim();
+    if (!p) return;
+    p.split(/(?<=[.!?。！？])\s*/).forEach(s => {
+      s = s.trim();
+      if (s) out.push(s);
+    });
+  });
+  return out;
+}
+
+/* ============ 语音标注引擎：重读 / 节奏 / 音调 ============ */
+let annoOn = true, ttsRhythm = false;
+let overrides = {};                 // i -> { 词序号: 'stress' | 'weak' }  手动微调
+
+const T_FALL = '\u2198', T_RISE = '\u2197', T_CONT = '\u2192', T_LINK = '\u203F';
+
+// 功能词：默认弱读
+const WEAK_SET = new Set(['a','an','the','and','or','but','if','of','to','in','on','at','for','with','as','by','from','up','out','off','over','under','about','into','than','then','so','because','that','which','who','whom','whose','where','when','while','although','though','since','unless','until','whether','is','am','are','was','were','be','been','being','have','has','had','do','does','did','will','would','can','could','shall','should','may','might','must','i','you','he','she','it','we','they','me','him','her','us','them','my','your','his','its','our','their','this','these','those','there','here','some','any','one','such','own','same',
+'during','before','after','between','through','around','without','within','against','toward','towards','along','across','behind','beyond','above','below','near','past','per','upon','among','amongst','throughout','outside','inside']);
+// 永远重读：否定、强调、疑问词
+const STRONG_SET = new Set(['not','no','never','none','nothing','nowhere','nobody','always','really','very','quite','too','absolutely','definitely','especially','exactly','totally','completely','probably','actually','certainly','surely','extremely','incredibly','particularly','generally','basically','obviously','honestly','hardly','barely','what','who','where','when','why','how']);
+// 句末要重读（介词 / 副词小品词）
+const PREP_SET = new Set(['at','in','on','for','to','with','from','up','out','off','about','into','over','under','by']);
+// 意群边界：这些词之前切一刀
+const BOUNDARY_SET = new Set(['and','but','so','because','which','that','who','when','while','although','though','since','however','also','then','where','why','how','if','unless','until','whether','as','or']);
+// 弱读时的实际读音
+const WEAKFORM = {to:'tə',for:'fər',of:'əv',and:'ən',or:'ər',but:'bət',that:'ðət',the:'ðə',a:'ə',an:'ən',is:'z',are:'ər',was:'wəz',were:'wər',be:'bi',been:'bɪn',being:'bɪɪn',have:'əv',has:'əz',had:'əd',do:'də',does:'dəz',did:'dəd',will:'l',would:'d',can:'kən',could:'kəd',shall:'ʃəl',should:'ʃəd',must:'məst',am:'əm',you:'jə',he:'hi',she:'ʃi',we:'wi',they:'ðeɪ',me:'mi',him:'ɪm',her:'ər',us:'əs',them:'ðəm',my:'maɪ',your:'jər',his:'ɪz',its:'ɪts',our:'ɑr',their:'ðər',this:'ðɪs',these:'ðiz',those:'ðoʊz',there:'ðər',here:'hɪr',some:'səm',any:'ni',one:'wʌn',at:'ət',as:'əz',from:'frəm',than:'ðən',then:'ðən',in:'ɪn',on:'ɑn',up:'ʌp',out:'aʊt',off:'ɔf',over:'oʊvər',under:'ʌndər',about:'əbaʊt',into:'ɪntə',because:'bɪkəz',so:'soʊ',if:'ɪf'};
+
+function esc(s){ return String(s).replace(/[&<>]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[c])); }
+function isV(c){ return 'aeiou'.indexOf(c) >= 0; }
+
+function endsConsonant(w){
+  let core = String(w).toLowerCase().replace(/[^a-z]/g, '');
+  if (/[^aeiou]e$/.test(core)) core = core.slice(0, -1);   // 哑音 e，如 like
+  if (!core) return false;
+  const last = core.slice(-1);
+  if (last === 'y' || last === 'w') return false;          // city / now 结尾实为元音
+  return !isV(last);
+}
+function startsVowel(w){
+  const core = String(w).toLowerCase().replace(/[^a-z]/g, '');
+  return core ? isV(core[0]) : false;
+}
+
+// 句末语调：一般疑问句升调，其余降调
+function sentenceTone(s){
+  const t = String(s).trim();
+  if (/\?$/.test(t)){
+    if (/^(do|does|did|is|are|am|was|were|have|has|had|can|could|will|would|shall|should|may|might|must|don't|doesn't|didn't|isn't|aren't|can't|couldn't|wouldn't|haven't|hasn't|hadn't)\b/i.test(t)) return T_RISE;
+    return T_FALL;
+  }
+  return T_FALL;
+}
+
+function annotate(i){
+  const raw = sents[i] || '';
+  const parts = raw.match(/[A-Za-z][A-Za-z'\u2019-]*|[.,!?;:]/g) || [];
+  const ov = overrides[i] || {};
+  const items = [];
+  let wi = 0;
+
+  parts.forEach(p => {
+    if (/^[.,!?;:]$/.test(p)){
+      items.push({ kind:'punc', text:p, pause: /[,;:]/.test(p) ? 1 : 2 });
+      return;
+    }
+    const base = p.toLowerCase().replace(/['\u2019].*$/, '');
+    let kind = WEAK_SET.has(base) ? 'weak' : 'stress';
+    if (STRONG_SET.has(base) || /n't$/i.test(p)) kind = 'stress';   // 否定缩略永远重读
+    if (ov[wi] === 'stress') kind = 'stress';
+    if (ov[wi] === 'weak')   kind = 'weak';
+    items.push({ kind:kind, text:p, base:base, wi:wi, pause:0, link:false });
+    wi++;
+  });
+
+  // 句末介词重读：What are you looking at?
+  let lastW = null;
+  for (let k = items.length - 1; k >= 0; k--){ if (items[k].kind !== 'punc'){ lastW = items[k]; break; } }
+  if (lastW && lastW.kind === 'weak' && PREP_SET.has(lastW.base)) lastW.kind = 'stress';
+
+  // 意群边界：边界词的前一个词后面切一刀
+  items.forEach((it, k) => {
+    if (it.kind === 'punc' || !BOUNDARY_SET.has(it.base)) return;
+    for (let j = k - 1; j >= 0; j--){
+      if (items[j].kind === 'punc' || items[j].pause) break;
+      items[j].pause = 1;
+      break;
+    }
+  });
+
+  // 切意群 → 每个意群最后一个重读词升级为「句子重音」
+  const groups = [];
+  let g = [];
+  items.forEach(it => { g.push(it); if (it.pause){ groups.push(g); g = []; } });
+  if (g.length) groups.push(g);
+  groups.forEach(grp => {
+    let last = null;
+    grp.forEach(it => { if (it.kind === 'stress') last = it; });
+    if (last) last.kind = 'focus';
+  });
+
+  // 连读：辅音结尾 + 元音开头
+  for (let k = 0; k < items.length - 1; k++){
+    const a = items[k], b = items[k + 1];
+    if (a.kind === 'punc' || b.kind === 'punc' || a.pause) continue;
+    a.link = endsConsonant(a.text) && startsVowel(b.text);
+  }
+  return items;
+}
+
+function annoHtml(i){
+  const items = annotate(i);
+  let html = '';
+  items.forEach(it => {
+    if (it.kind === 'punc'){
+      if (it.pause >= 2) html += '<span class="punc">' + esc(it.text) + '</span>';
+      else html += ' <span class="chunk" title="意群停顿">|</span>';
+      return;
+    }
+    const tip = it.kind === 'weak'
+      ? '弱读' + (WEAKFORM[it.base] ? ' /' + WEAKFORM[it.base] + '/' : '') + ' · 点一下改成重读'
+      : (it.kind === 'focus' ? '句子重音（这句最重）· 点一下改成弱读' : '重读 · 点一下改成弱读');
+    html += (html ? ' ' : '') + '<span class="w ' + it.kind + '" data-wi="' + it.wi + '" title="' + tip + '">' + esc(it.text) + '</span>';
+    if (it.link) html += '<span class="link" title="可连读">' + T_LINK + '</span>';
+    if (it.pause === 1) html += ' <span class="chunk" title="意群停顿">|</span>';
+  });
+  const tone = sentenceTone(sents[i] || '');
+  html += '<span class="tone" title="' + (tone === T_RISE ? '升调' : '降调') + '">' + tone + '</span>';
+  return html;
+}
+
+function pitchSvg(i){
+  const items = annotate(i);
+  const pts = [];
+  items.forEach(it => {
+    if (it.kind === 'punc') return;
+    pts.push(it.kind === 'focus' ? 0.92 : (it.kind === 'stress' ? 0.62 : 0.26));
+  });
+  if (pts.length < 2) return '';
+  pts[pts.length - 1] = sentenceTone(sents[i] || '') === T_RISE ? 0.95 : 0.08;
+  const w = 300, h = 32, pad = 5;
+  const step = (w - pad * 2) / (pts.length - 1);
+  const str = pts.map((p, k) => (pad + k * step).toFixed(1) + ',' + (h - pad - p * (h - pad * 2)).toFixed(1)).join(' ');
+  return '<svg class="pitch" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">'
+    + '<polyline points="' + str + '" fill="none" stroke="#2f6df6" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+}
+
+function paintSent(i){
+  const card = cards[i];
+  if (!card) return;
+  const t = card.querySelector('.txt');
+  const pb = card.querySelector('.pitchbox');
+  if (!t) return;
+  if (!annoOn){
+    t.textContent = sents[i];
+    if (pb) pb.innerHTML = '';
+    return;
+  }
+  t.innerHTML = annoHtml(i);
+  if (pb) pb.innerHTML = pitchSvg(i);
+}
+
+function toggleWord(i, wi){
+  const items = annotate(i);
+  const it = items.find(x => x.wi === wi);
+  if (!it) return;
+  overrides[i] = overrides[i] || {};
+  overrides[i][wi] = (it.kind === 'weak') ? 'stress' : 'weak';
+  paintSent(i);
+  setStatus('已改：' + it.text + ' → ' + (overrides[i][wi] === 'weak' ? '弱读' : '重读'));
+}
+
+function ttsText(i){
+  if (!ttsRhythm) return sents[i];
+  const items = annotate(i);
+  const out = [];
+  items.forEach(it => {
+    if (it.kind === 'punc'){ if (it.pause >= 2) out.push(it.text); return; }
+    out.push(it.text);
+    if (it.pause === 1) out.push(',');
+  });
+  return out.join(' ').replace(/\s+,/g, ',').replace(/\s+([.,!?;:])/g, '$1');
+}
+
+/* ============ 渲染 ============ */
+function render(){
+  list.innerHTML = '';
+  cards = []; opsRef = [];
+  statCard.textContent = sents.length + ' 句';
+  if (!sents.length){
+    list.innerHTML = '<div class="empty">左边粘贴答案 → 点「生成跟读卡片」<br><br>'
+      + '<b>跟读流程：</b>听一句 → 停顿 → 你开口跟读<br>'
+      + '<b>对比流程：</b>点「录音」念一遍 → 自动播放 原声 vs 你的<br><br>'
+      + '提示：跟读停顿建议 2~3 秒，留足开口时间</div>';
+    return;
+  }
+  sents.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'card';
+
+    const n = document.createElement('div');
+    n.className = 'n'; n.textContent = i + 1;
+
+    const body = document.createElement('div');
+    body.className = 'body';
+    const t = document.createElement('div');
+    t.className = 'txt sent';
+    t.title = '点空白朗读这句 · 点单词切换重读 / 弱读';
+    t.onclick = e => {
+      const w = e.target.closest('.w');
+      if (w){ e.stopPropagation(); toggleWord(i, +w.dataset.wi); return; }
+      speakOne(i);
+    };
+    const pb = document.createElement('div');
+    pb.className = 'pitchbox';
+    const info = document.createElement('div');
+    info.className = 'recinfo'; info.hidden = true;
+    body.appendChild(t); body.appendChild(pb); body.appendChild(info);
+
+    const ops = document.createElement('div');
+    ops.className = 'ops';
+
+    const bStd = document.createElement('button');
+    bStd.className = 'mini'; bStd.textContent = '原声';
+    bStd.onclick = e => { e.stopPropagation(); speakOne(i); };
+
+    const bRec = document.createElement('button');
+    bRec.className = 'mini'; bRec.textContent = '录音';
+    bRec.onclick = e => { e.stopPropagation(); recIdx === i ? stopRec(true) : startRec(i); };
+
+    const bMine = document.createElement('button');
+    bMine.className = 'mini'; bMine.textContent = '我的'; bMine.disabled = true;
+    bMine.onclick = e => { e.stopPropagation(); playMine(i); };
+
+    const bCmp = document.createElement('button');
+    bCmp.className = 'mini'; bCmp.textContent = '对比'; bCmp.disabled = true;
+    bCmp.onclick = e => { e.stopPropagation(); compare(i); };
+
+    ops.appendChild(bStd); ops.appendChild(bRec); ops.appendChild(bMine); ops.appendChild(bCmp);
+    d.appendChild(n); d.appendChild(body); d.appendChild(ops);
+    list.appendChild(d);
+    cards.push(d);
+    opsRef.push({ rec: bRec, mine: bMine, cmp: bCmp });
+  });
+  sents.forEach((_, i) => paintSent(i));
+  Object.keys(rec).forEach(k => updateRecInfo(+k));   // 重绘后恢复已有录音信息
+}
+
+/* 哪几句的语调曲线是展开的（重绘卡片时要保持） */
+const pitchOpen = {};
+
+/* 画一句的音高曲线：横轴时间，纵轴音高（半音刻度），浅灰柱是音量 */
+function drawPitchBox(cv, pitch) {
+  if (!pitch || !pitch.pts || !pitch.pts.length) return;
+  const r = cv.getBoundingClientRect();
+  if (r.width < 40) return;                     // 还没布局好，等下一帧
+  const dpr = window.devicePixelRatio || 1;
+  const w = Math.max(40, Math.round(r.width));
+  const h = Math.max(30, Math.round(r.height));
+  cv.width = Math.round(w * dpr);
+  cv.height = Math.round(h * dpr);
+  const g = cv.getContext('2d');
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.clearRect(0, 0, w, h);
+
+  const Y_MIN = -6, Y_MAX = 26, PAD_T = 5, PAD_B = 5;
+  const semi = f => 12 * Math.log2(f / 100);
+  const yOf = f => {
+    const t = (semi(f) - Y_MIN) / (Y_MAX - Y_MIN);
+    return PAD_T + (1 - Math.max(0, Math.min(1, t))) * (h - PAD_T - PAD_B);
+  };
+  const durMs = Math.max(100, pitch.dur * 1000);
+  const xOf = ms => (ms / durMs) * w;
+
+  // 横向淡线，给"高低"一点参照
+  g.strokeStyle = '#eef1f6'; g.lineWidth = 1;
+  for (let s = -3; s <= 24; s += 9) {
+    const y = yOf(100 * Math.pow(2, s / 12));
+    g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke();
+  }
+
+  // 音量包络
+  g.fillStyle = 'rgba(140,150,170,.17)';
+  const bw = Math.max(1, w / pitch.pts.length);
+  for (const p of pitch.pts) {
+    const bh = Math.min(1, p.rms * 2.2) * (h - PAD_T - PAD_B) * 0.45;
+    g.fillRect(xOf(p.ms), h - PAD_B - bh, Math.max(1, bw), bh);
+  }
+
+  // 每段末尾 400ms：判升降就看这一段
+  g.fillStyle = 'rgba(47,109,246,.10)';
+  for (const s of pitch.segs) {
+    const x1 = xOf(Math.max(s.a, s.b - Pitch.TAIL_MS));
+    const x2 = xOf(s.b);
+    g.fillRect(x1, PAD_T, Math.max(1, x2 - x1), h - PAD_T - PAD_B);
+  }
+
+  // 音高曲线（清音处断开）
+  g.strokeStyle = '#2f6df6'; g.lineWidth = 1.8;
+  g.lineJoin = 'round'; g.lineCap = 'round';
+  let pen = false;
+  g.beginPath();
+  for (const p of pitch.pts) {
+    if (p.f0 == null) { pen = false; continue; }
+    const x = xOf(p.ms), y = yOf(p.f0);
+    if (!pen) { g.moveTo(x, y); pen = true; } else g.lineTo(x, y);
+  }
+  g.stroke();
+
+  // 段间隔断
+  g.strokeStyle = '#dfe4ee'; g.setLineDash([2, 3]);
+  for (const s of pitch.segs) {
+    const x = xOf(s.b);
+    g.beginPath(); g.moveTo(x, PAD_T); g.lineTo(x, h - PAD_B); g.stroke();
+  }
+  g.setLineDash([]);
+}
+
+/* 实测语调 vs 该句应有的语调（sentenceTone 的结论） */
+function toneVerdict(pitch, i) {
+  const dir = pitch.lastDir;
+  const want = sentenceTone(sents[i] || '');
+  const wantCh = want === T_RISE ? '↗' : '↘';
+  const word = { up: '升', down: '降', flat: '平', 'slight-up': '微升', 'slight-down': '微降', na: '—' }[dir] || '—';
+  const sym = { up: T_RISE, 'slight-up': T_RISE, down: T_FALL, 'slight-down': T_FALL, flat: T_CONT, na: '·' }[dir] || '·';
+
+  let verdict = '', cls = 'mut';
+  if (dir === 'na') { verdict = '没抓到稳定音高'; }
+  else if (dir === 'flat') { verdict = '句末偏平'; }
+  else {
+    const isUp = dir === 'up' || dir === 'slight-up';
+    const wantUp = want === T_RISE;
+    if (wantUp === isUp) { verdict = '对'; cls = 'ok'; }
+    else { verdict = wantUp ? '该升却降了' : '该降却升了'; cls = 'bad'; }
+  }
+  return { sym, word, verdict, cls, wantCh };
+}
+
+function updateRecInfo(i){
+  const card = cards[i];
+  const o = opsRef[i];
+  if (!card) return;
+  const info = card.querySelector('.recinfo');
+  const r = rec[i];
+
+  // 每次重建都先清掉语调节点，避免叠出多份
+  card.querySelectorAll('.toneline,.pitchbox').forEach(x => x.remove());
+
+  if (recIdx === i){
+    info.hidden = false;
+    info.innerHTML = '';
+    const m = document.createElement('div'); m.className = 'meter';
+    const f = document.createElement('i'); m.appendChild(f);
+    meterFill = f;
+    const tip = document.createElement('span');
+    tip.className = 'dur'; tip.textContent = '录音中...';
+    info.appendChild(m); info.appendChild(tip);
+    if (o){ o.rec.classList.add('rec-on'); o.rec.textContent = '停 0.0s'; }
+    return;
+  }
+  if (o && o.rec.classList.contains('rec-on')){
+    o.rec.classList.remove('rec-on'); o.rec.textContent = '录音';
+  }
+
+  if (!r){ info.hidden = true; info.innerHTML = ''; if (o){ o.mine.disabled = true; o.cmp.disabled = true; } return; }
+
+  info.hidden = false;
+  info.innerHTML = '';
+  const cv = document.createElement('canvas');
+  cv.className = 'wave'; cv.width = 340; cv.height = 56;
+  info.appendChild(cv);
+  drawWave(cv, r.peaks, '#2f6df6');
+
+  const td = ttsDur[i];
+  const txt = document.createElement('span');
+  txt.className = 'dur';
+  if (td){
+    const d = r.dur - td;
+    const judge = Math.abs(d) <= 0.5 ? '节奏接近' : (d > 0 ? '偏慢' : '偏快');
+    txt.innerHTML = '我的 <b>' + r.dur.toFixed(1) + 's</b> · 原声 ' + td.toFixed(1) + 's · '
+      + (d > 0 ? '+' : '') + d.toFixed(1) + 's ' + judge;
+  } else {
+    txt.innerHTML = '我的 <b>' + r.dur.toFixed(1) + 's</b>';
+  }
+  info.appendChild(txt);
+
+  const del = document.createElement('button');
+  del.className = 'mini warn'; del.textContent = '删除';
+  del.onclick = e => {
+    e.stopPropagation();
+    URL.revokeObjectURL(r.url);
+    delete rec[i]; delete ttsDur[i];
+    updateRecInfo(i);
+  };
+  info.appendChild(del);
+  if (o){ o.mine.disabled = false; o.cmp.disabled = false; }
+
+  /* ---- 语调判定行 ---- */
+  const pt = r.pitch;
+  if (!pt || !pt.hasVoice) return;
+  const v = toneVerdict(pt, i);
+
+  const tl = document.createElement('div');
+  tl.className = 'toneline';
+  tl.innerHTML = '<span>语调</span>' +
+    '<b class="tone">' + v.sym + '</b>' +
+    '<span>' + v.word + '</span>' +
+    '<span class="' + v.cls + '">' + v.verdict + '</span>' +
+    '<span class="mut">· 该' + v.wantCh + ' · 音域 ' + pt.rangeSemis.toFixed(1) + ' 半音' +
+    ' · 有声 ' + Math.round(pt.voicedRatio * 100) + '%</span>';
+
+  const bP = document.createElement('button');
+  bP.className = 'mini';
+  bP.textContent = pitchOpen[i] ? '收起曲线' : '看曲线';
+  bP.onclick = e => {
+    e.stopPropagation();
+    pitchOpen[i] = !pitchOpen[i];
+    updateRecInfo(i);
+  };
+  tl.appendChild(bP);
+  info.insertAdjacentElement('afterend', tl);
+
+  if (pitchOpen[i]) {
+    const box = document.createElement('div');
+    box.className = 'pitchbox';
+    const cv2 = document.createElement('canvas');
+    box.appendChild(cv2);
+    const note = document.createElement('div');
+    note.className = 'pnote';
+    note.textContent = '往上爬＝语调升，往下走＝语调降；线断开＝清音或换气；浅蓝段＝判升降用的句末 0.4 秒';
+    box.appendChild(note);
+    tl.insertAdjacentElement('afterend', box);
+    requestAnimationFrame(() => drawPitchBox(cv2, pt));
+  }
+}
+
+function clearHL(){ cards.forEach(c => c.classList.remove('on')); }
+function hl(i){
+  clearHL();
+  if (cards[i]){
+    cards[i].classList.add('on');
+    cards[i].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+}
+function setStatus(t, live){
+  statusTxt.textContent = t;
+  if (dot.className !== 'dot rec') dot.className = live ? 'dot live' : 'dot';
+}
+
+/* ============ 朗读 ============ */
+/* 每个 utterance 一个递增编号：只有「当前这一个」的回调才算数。
+   浏览器偶发重复派发 onend（旧句子的回调晚到），会让推进链跑成两条 → 每句读两遍。
+   下面三处朗读都靠这个编号做幂等。 */
+let ttsGid = 0, curGid = 0;
+
+/* 无声自检的判定：只有确认「一声都没出」才允许重试。
+   关键：在线神经语音有时不派发 onstart，但 speechSynthesis.speaking 已经是 true ——
+   这时句子正在读，绝不能 cancel 重读，否则同一句会被读第二遍。
+   （这就是「整篇播放每段读两遍」的成因：4.5 秒的旧阈值 + 没看 speaking 状态） */
+function shouldRetryNoSound(st){
+  if (st.speaking || st.pending) return false;   // 引擎在读 / 还有排队 → 不是没声音
+  if (st.uttStarted || st.cancelled || st.paused) return false;
+  return true;
+}
+function ttsState(){
+  let speaking = false, pending = false;
+  try { speaking = !!speechSynthesis.speaking; pending = !!speechSynthesis.pending; } catch(e){}
+  return { speaking: speaking, pending: pending };
+}
+
+function mkUtt(i){
+  const u = new SpeechSynthesisUtterance(ttsText(i));
+  if (curVoice) u.voice = curVoice;
+  u.lang = curVoice ? curVoice.lang : 'en-US';
+  u.rate = parseFloat(rateEl.value);
+  u.pitch = 1;
+  return u;
+}
+
+function stopAll(){
+  cancelled = true;
+  playing = false; paused = false;
+  clearTimeout(gapTimer); gapTimer = null; inGap = false; gapRemain = 0;
+  clearTimeout(speakTimer); speakTimer = null;
+  if (myAudio) myAudio.pause();
+  try { speechSynthesis.cancel(); } catch(e){}
+  clearHL();
+  btnPlay.disabled = false; btnPlay.classList.add('pri'); btnPlay.textContent = '整篇播放';
+  btnPause.disabled = true; btnPause.textContent = '暂停';
+  btnStop.disabled = true;
+}
+
+function armPlay(){
+  playing = true; paused = false; pauseWorks = true;
+  btnPlay.disabled = true; btnPlay.textContent = '播放中';
+  btnPause.disabled = false; btnPause.textContent = '暂停';
+  btnStop.disabled = false;
+}
+
+function scheduleNext(i, ms){
+  inGap = true; gapRemain = ms; gapStartAt = Date.now();
+  gapTimer = setTimeout(() => { gapTimer = null; inGap = false; gapRemain = 0; speakFrom(i); }, ms);
+}
+
+// 找出一个更可能出声的英语音色：优先本地合成（离线、稳），没有本地就换另一个美式在线音色
+function findLocalVoice(){
+  const pool = voices.length ? voices : (speechSynthesis.getVoices() || []);
+  const en = pool.filter(v => /^en/i.test(v.lang || ''));
+  const others = en.filter(v => !curVoice || v.name !== curVoice.name);
+  const local = others.find(v => !/online|natural|neural/i.test(v.name || ''));
+  if (local) return local;
+  // 这台机器可能一个本地音色都没有（全是在线神经语音），那就换一个美式在线音色碰碰运气
+  return others.find(v => /^en[-_]us/i.test(v.lang || '')) || others[0] || null;
+}
+
+function switchVoiceTo(v){
+  curVoice = v;
+  saveVoice(v);
+  const k = voices.findIndex(x => x.name === v.name);
+  if (k >= 0) voiceSel.selectedIndex = k;
+  const n = (v.name || '').toLowerCase();
+  if (/natural|neural|online|enhanced|premium/.test(n)){
+    voiceBadge.textContent = '美式自然语音'; voiceBadge.className = 'badge ok';
+  } else {
+    voiceBadge.textContent = '美式语音 · 普通'; voiceBadge.className = 'badge';
+  }
+  voiceBadge.title = '';
+}
+
+function speakFrom(i){
+  if (cancelled) return;
+  if (i >= sents.length){
+    stopAll();
+    setStatus('整篇跟读完成');
+    return;
+  }
+  inGap = false; gapRemain = 0;
+  curIdx = i;
+  hl(i);
+  setStatus('朗读 ' + (i + 1) + ' / ' + sents.length, true);
+  const t0 = Date.now();
+  let u;
+  try { u = mkUtt(i); }
+  catch(e){
+    curVoice = null;                       // 音色对象失效 → 退回默认音色
+    try { u = mkUtt(i); }
+    catch(e2){ stopAll(); setStatus('朗读失败：' + e2.message); return; }
+  }
+  curUtt = u;
+  uttStarted = false;
+  const gid = ++ttsGid; curGid = gid;
+  u.onstart = () => {
+    if (gid !== curGid) return;
+    uttStarted = true; clearTimeout(speakTimer); speakTimer = null;
+  };
+  u.onend = () => {
+    if (gid !== curGid) return;          // 旧句 / 重复派发的回调，直接丢掉
+    curGid = 0;
+    curUtt = null;
+    clearTimeout(speakTimer); speakTimer = null;
+    if (cancelled) return;
+    ttsDur[i] = (Date.now() - t0) / 1000;
+    updateRecInfo(i);
+    if (mode === 'one'){ clearHL(); stopAll(); setStatus('第 ' + (i + 1) + ' 句读完，点「录音」跟读一遍'); return; }
+    setStatus('第 ' + (i + 1) + ' 句 → 该你跟读了', false);
+    scheduleNext(i + 1, parseFloat(gapEl.value) * 1000);
+  };
+  u.onerror = ev => {
+    if (gid !== curGid) return;          // 已经切到别的句子了，这个错误不归它管
+    curGid = 0;
+    curUtt = null;
+    clearTimeout(speakTimer); speakTimer = null;
+    if (cancelled) return;
+    const err = (ev && ev.error) || '';
+    // 没有用户手势：换音色没用，直接告诉用户
+    if (err === 'not-allowed'){
+      stopAll();
+      setStatus('浏览器拦住了语音：先点一下页面空白处（或用 Edge 直接打开本文件）再点播放');
+      return;
+    }
+    // 在线音色连不上服务器 / 被系统禁用 → 自动降级到本地音色
+    if (fallbackDepth < 3 && /synthesis|voice|audio|network|interrupted/i.test(err)){
+      const alt = findLocalVoice();
+      if (alt){
+        fallbackDepth++;
+        switchVoiceTo(alt);
+        setStatus('「' + (alt.name || '') + '」这个音色用不了 → 已自动换成本地音色重试');
+        setTimeout(() => { if (!cancelled) speakFrom(i); }, 160);
+        return;
+      }
+    }
+    stopAll();
+    setStatus('朗读中断' + (err ? '（' + err + '）' : '') + '，换个音色再试');
+  };
+  speechSynthesis.speak(u);
+
+  // 等太久还没出声 → 说明在连服务器，先说清楚，避免以为坏了
+  setTimeout(() => {
+    if (!cancelled && !uttStarted && !paused){
+      setStatus('正在连接语音服务…（在线音色首句可能要 1~2 秒）', true);
+    }
+  }, 1300);
+
+  // 无声自检：只在「真的没开始读」时才重试。
+  // 在线音色首句要连服务器，给足 8 秒；只要 speaking 为真就说明在读，绝不打断重读。
+  clearTimeout(speakTimer);
+  speakTimer = setTimeout(() => {
+    speakTimer = null;
+    const st = ttsState();
+    if (!shouldRetryNoSound({
+      speaking: st.speaking, pending: st.pending,
+      uttStarted: uttStarted, cancelled: cancelled, paused: paused
+    })) return;
+    if (fallbackDepth < 2){
+      const alt = findLocalVoice();
+      if (alt){
+        fallbackDepth++;
+        try { speechSynthesis.cancel(); } catch(e2){}
+        switchVoiceTo(alt);
+        setStatus('确认没出声 → 已自动换成「' + alt.name + '」重试');
+        setTimeout(() => { if (!cancelled) speakFrom(i); }, 180);
+        return;
+      }
+    }
+    setStatus('一直没有声音：可能是系统静音、输出设备不对，或这个音色不可用 → 打开「语音诊断.html」查一下');
+  }, 8000);
+
+  maybeWarmUp();
+}
+
+function playAll(){
+  if (!sents.length){ setStatus('请先在左边粘贴答案并生成卡片'); return; }
+  if (!voices.length) fillVoices();
+  stopAll();
+  cancelled = false;
+  mode = 'all';
+  fallbackDepth = 0;
+  armPlay();
+  setStatus('准备朗读…', true);
+  // 关键：cancel() 紧接 speak() 会被浏览器吞掉，必须让出一小段时间
+  setTimeout(() => { if (!cancelled) speakFrom(0); }, 90);
+}
+
+function speakOne(i){
+  stopAll();
+  cancelled = false;
+  mode = 'one';
+  fallbackDepth = 0;
+  armPlay();
+  setTimeout(() => { if (!cancelled) speakFrom(i); }, 90);
+}
+
+function togglePause(){
+  if (!playing) return;
+  if (!paused){
+    paused = true;
+    btnPause.textContent = '继续';
+    if (inGap){
+      clearTimeout(gapTimer); gapTimer = null;
+      gapRemain = Math.max(0, gapRemain - (Date.now() - gapStartAt));
+      setStatus('已暂停（跟读停顿中）');
+    } else {
+      try { speechSynthesis.pause(); } catch(e){}
+      setTimeout(() => {
+        if (!paused) return;
+        if (speechSynthesis.speaking && !speechSynthesis.paused){
+          pauseWorks = false;
+          cancelled = true;
+          try { speechSynthesis.cancel(); } catch(e){}
+          setStatus('已暂停（继续时本句会重读）');
+        } else {
+          setStatus('已暂停');
+        }
+      }, 90);
+    }
+  } else {
+    paused = false;
+    btnPause.textContent = '暂停';
+    cancelled = false;
+    if (inGap && gapRemain > 0){
+      setStatus('继续', true);
+      scheduleNext(curIdx + 1, gapRemain);
+    } else if (!pauseWorks){
+      setStatus('继续', true);
+      speakFrom(curIdx >= 0 ? curIdx : 0);
+    } else {
+      try { speechSynthesis.resume(); } catch(e){}
+      setStatus('继续', true);
+    }
+  }
+}
+
+/* ============ 事件 ============ */
+$('#btnParse').onclick = () => {
+  stopAll();
+  sents = splitSents(src.value);
+  overrides = {};                                   // 换了文本，旧的字号微调作废
+  render();
+  setStatus(sents.length ? '已生成 ' + sents.length + ' 句，点「整篇播放」开始跟读' : '没有可朗读的内容');
+};
+$('#btnDemo').onclick = () => { src.value = DEMO; updateSrcStat(); $('#btnParse').click(); };
+$('#btnClear').onclick = () => {
+  stopAll();
+  src.value = ''; sents = []; rec = {}; ttsDur = {};
+  render(); updateSrcStat(); setStatus('已清空');
+};
+btnPlay.onclick = playAll;
+btnPause.onclick = togglePause;
+btnStop.onclick = () => { stopAll(); setStatus('已停止'); };
+$('#btnReload').onclick = () => { fillVoices(); setStatus('已刷新语音列表，共 ' + voices.length + ' 个'); };
+$('#btnTest').onclick = () => {
+  if (!voices.length){ fillVoices(); if (!voices.length){ setStatus('没有检测到英语音色 → 打开「语音诊断.html」'); return; } }
+  speakText('Hello. This is a quick test. If you can hear this, the voice is working properly.');
+};
+voiceSel.onchange = () => {
+  const i = parseInt(voiceSel.value, 10);
+  curVoice = (i >= 0 && voices[i]) ? voices[i] : null;
+  saveVoice(curVoice);
+  const canFallback = findLocalVoice();
+  setStatus('已切换音色：' + (curVoice ? curVoice.name : '无') +
+            (canFallback ? '' : '（注意：这是页面上唯一的英语音色，如果没声音就说明系统层面有问题）'));
+};
+$('#annoOn').onchange = e => {
+  annoOn = e.target.checked;
+  $('#legend').style.display = annoOn ? '' : 'none';
+  render();
+  setStatus(annoOn ? '已开启语音标注' : '已关闭语音标注');
+};
+$('#rhythmOn').onchange = e => {
+  ttsRhythm = e.target.checked;
+  setStatus(ttsRhythm ? '朗读时会在意群处插入停顿，节奏更贴近标注' : '朗读使用原句');
+};
+rateEl.oninput = () => { rateVal.textContent = parseFloat(rateEl.value).toFixed(2); };
+gapEl.oninput = () => { gapVal.textContent = parseFloat(gapEl.value) + 's'; };
+src.oninput = updateSrcStat;
+function updateSrcStat(){ statSrc.textContent = src.value.length + ' 字'; }
+
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && e.target === document.body){
+    e.preventDefault();
+    if (playing) togglePause(); else playAll();
+  }
+});
+
+window.addEventListener('beforeunload', () => {
+  try { speechSynthesis.cancel(); } catch(e){}
+  if (recStream) recStream.getTracks().forEach(t => t.stop());
+});
+
+/* ============ 题库 ============ */
+const BANK = window.IELTS_BANK || null;
+const btnBank = $('#btnBank'), bankMask = $('#bankMask'), bankDrawer = $('#bankDrawer');
+const bankListEl = $('#bankList'), bankQEl = $('#bankQ'), bankTabsEl = $('#bankTabs'), bankStatEl = $('#bankStat');
+const qcard = $('#qcard'), qBody = $('#qBody'), qTitle = $('#qTitle'), qMeta = $('#qMeta'), qTag = $('#qTag');
+
+let bankAll = [], bankSecs = [], curSec = '全部', curTopic = null, qUtt = null;
+
+if (BANK){
+  BANK.sections.forEach((s, si) => {
+    bankSecs.push(s.name);
+    s.groups.forEach(g => {
+      g.topics.forEach(t => {
+        bankAll.push(Object.assign({}, t, {
+          _sec: s.name, _grp: g.label, _part: g.part,
+          _id: si + '|' + g.part + '|' + (t.no != null ? t.no : 'L-' + t.en)
+        }));
+      });
+    });
+  });
+}
+
+function bankOpen(){
+  if (!BANK){
+    alert('题库没加载到。\n\n请确认「题库数据.js」和「yasigendu.html」在同一个文件夹里，\n两个文件一起拷贝，不要只拷 HTML。');
+    return;
+  }
+  bankMask.hidden = false; bankDrawer.hidden = false;
+  curSec = '全部'; bankQEl.value = '';
+  renderBankTabs(); renderBankList();
+  setTimeout(() => bankQEl.focus(), 40);
+}
+function bankClose(){
+  bankMask.hidden = true; bankDrawer.hidden = true;
+}
+function renderBankTabs(){
+  bankTabsEl.innerHTML = '';
+  ['全部'].concat(bankSecs).forEach(n => {
+    const b = document.createElement('button');
+    b.textContent = n;
+    if (n === curSec) b.className = 'on';
+    b.onclick = () => { curSec = n; renderBankTabs(); renderBankList(); };
+    bankTabsEl.appendChild(b);
+  });
+}
+function renderBankList(){
+  const kw = (bankQEl.value || '').trim().toLowerCase();
+  let arr = bankAll.filter(t => curSec === '全部' || t._sec === curSec);
+  if (bankOnlyAns && bankOnlyAns.checked) arr = arr.filter(t => ansOf(t));
+  if (kw){
+    arr = arr.filter(t => {
+      const bag = [t.en, t.cn, t.cue,
+        (t.questions || []).join(' '), (t.bullets || []).join(' '), (t.p3 || []).join(' ')
+      ].filter(Boolean).join(' ').toLowerCase();
+      return bag.indexOf(kw) >= 0;
+    });
+  }
+  bankListEl.innerHTML = '';
+  if (!arr.length){
+    const d = document.createElement('div');
+    d.className = 'bank-empty';
+    d.textContent = kw ? '没搜到，换个关键词试试' : '暂无内容';
+    bankListEl.appendChild(d);
+    return;
+  }
+  let lastGrp = '';
+  arr.forEach(t => {
+    const gname = t._sec + ' · Part ' + t._part + ' ' + t._grp;
+    if (gname !== lastGrp){
+      lastGrp = gname;
+      const h = document.createElement('div');
+      h.className = 'bank-grp'; h.textContent = gname;
+      bankListEl.appendChild(h);
+    }
+    bankListEl.appendChild(makeBankItem(t));
+  });
+}
+function makeBankItem(t){
+  const d = document.createElement('div');
+  d.className = 'bank-item';
+  if (curTopic && curTopic._id === t._id) d.classList.add('on');
+  const num = document.createElement('span');
+  num.className = 'num';
+  num.textContent = t.no != null ? t.no : '★';
+  const tt = document.createElement('span');
+  tt.className = 'tt';
+  tt.textContent = (t.kind === 'p1') ? t.en : t.cn;
+  if (ansOf(t)){
+    const ok = document.createElement('span');
+    ok.className = 'ok'; ok.textContent = '✓'; ok.title = '已有参考答案';
+    tt.appendChild(ok);
+  }
+  const sub = document.createElement('small');
+  sub.textContent = (t.kind === 'p1') ? (t.legacy ? '万年老题' : 'Part 1') : (t.cue || '');
+  tt.appendChild(sub);
+  const cnt = document.createElement('span');
+  cnt.className = 'cnt';
+  cnt.textContent = (t.kind === 'p1' ? (t.questions || []).length : (t.p3 || []).length) + ' 题';
+  d.appendChild(num); d.appendChild(tt); d.appendChild(cnt);
+  d.onclick = () => pickTopic(t);
+  return d;
+}
+function buildUL(items){
+  const ul = document.createElement('ul');
+  (items || []).forEach(x => {
+    const li = document.createElement('li');
+    li.textContent = x;
+    ul.appendChild(li);
+  });
+  return ul;
+}
+function pickTopic(t){
+  curTopic = t;
+  showQCard(t);
+  bankClose();
+  setStatus('已选题：' + (t.kind === 'p1' ? t.en : t.cn) + '，开始写答案吧');
+  src.focus();
+}
+function showQCard(t){
+  qBody.innerHTML = '';
+  qTag.textContent = (t.kind === 'p1') ? (t.legacy ? '老题' : 'P1') : 'P2&3';
+  qTag.className = 'qtag' + (t.kind === 'p1' ? '' : ' p2');
+  qTitle.textContent = (t.kind === 'p1') ? t.en : t.cn;
+  qMeta.textContent = (t.kind === 'p1')
+    ? (t.questions || []).length + ' 个问题'
+    : (t.bullets || []).length + ' 个提示 · P3 ' + (t.p3 || []).length + ' 题';
+
+  if (t.kind === 'p1'){
+    const cue = document.createElement('div');
+    cue.className = 'cue'; cue.textContent = t.en;
+    qBody.appendChild(cue);
+    qBody.appendChild(buildUL(t.questions));
+  } else {
+    const cue = document.createElement('div');
+    cue.className = 'cue'; cue.textContent = t.cue;
+    qBody.appendChild(cue);
+    const p1 = document.createElement('div');
+    p1.className = 'ph'; p1.textContent = 'YOU SHOULD SAY';
+    qBody.appendChild(p1);
+    qBody.appendChild(buildUL(t.bullets));
+    const p2 = document.createElement('div');
+    p2.className = 'ph'; p2.textContent = 'PART 3';
+    qBody.appendChild(p2);
+    qBody.appendChild(buildUL(t.p3));
+  }
+  qcard.hidden = false;
+  const hasAns = renderAns(t);
+  setAnsOpen(hasAns);            // 有参考答案就默认展开，省一次点击
+}
+function readTopic(){
+  if (!curTopic) return;
+  stopAll();
+  const t = curTopic;
+  const txt = (t.kind === 'p1')
+    ? (t.en + '. ' + (t.questions || []).join(' '))
+    : (t.cue + ' ' + (t.bullets || []).join(' ') + ' ' + (t.p3 || []).join(' '));
+  try { speechSynthesis.cancel(); } catch(e){}
+  const u = new SpeechSynthesisUtterance(txt);
+  if (curVoice) u.voice = curVoice;
+  u.lang = curVoice ? curVoice.lang : 'en-US';
+  u.rate = 0.9; u.pitch = 1;
+  qUtt = u;                                  // Safari 需要强引用保活
+  u.onend = () => { qUtt = null; setStatus('题目读完，可以开始写答案了'); };
+  u.onerror = () => { qUtt = null; setStatus('朗读中断'); };
+  setStatus('正在朗读题目…', true);
+  speechSynthesis.speak(u);
+}
+
+/* ============ 参考答案 ============ */
+const ANS = window.IELTS_ANSWERS || null;
+const ZH = window.IELTS_ZH || null;
+const qAns = $('#qAns'), ansBody = $('#ansBody'), ansMat = $('#ansMat');
+const qAnsBtn = $('#qAnsBtn'), ansFillBtn = $('#ansFill'), ansP3Btn = $('#ansP3');
+const zhBtn = $('#zhBtn');
+const bankOnlyAns = $('#bankOnlyAns'), ansCountEl = $('#ansCount');
+
+/* 中文对照开关（记住选择） */
+let zhOn = localStorage.getItem('ielts_zh') !== '0';
+
+function splitSent(t){
+  const safe = String(t).replace(/\b(Mr|Mrs|Ms|Dr|etc|e\.g|i\.e|vs)\./g, '$1<D>');
+  return safe.split(/(?<=[.!?])\s+(?=[A-Z"“])/)
+             .map(x => x.replace(/<D>/g, '.').trim())
+             .filter(Boolean);
+}
+
+function zhOf(t){
+  if (!ZH || !t) return null;
+  if (t.kind === 'p1'){
+    const z = ZH.p1 && ZH.p1[t.en];
+    return (z && z.length) ? z : null;
+  }
+  const z = ZH.p2 && ZH.p2[t.cn];
+  return (z && z.zh && z.zh.length) ? z : null;
+}
+
+function updateZhBtn(t){
+  if (!zhBtn) return;
+  const has = !!zhOf(t);
+  zhBtn.disabled = !has;
+  zhBtn.classList.toggle('on', has && zhOn);
+  zhBtn.textContent = has ? (zhOn ? '中文 ✓' : '中文') : '中文 —';
+  zhBtn.title = has ? '显示 / 隐藏逐句中文对照' : '这一题还没有中文译文';
+}
+
+function ansOf(t){
+  if (!ANS || !t) return null;
+  const k = (t.kind === 'p1') ? t.en : t.cn;
+  const a = (t.kind === 'p1') ? ANS.p1[k] : ANS.p2[k];
+  return a || null;
+}
+
+function ansMainText(t){
+  const a = ansOf(t);
+  if (!a) return '';
+  return (t.kind === 'p1') ? a.a.join('\n\n') : (a.text || '');
+}
+function ansP3Text(t){
+  const a = ansOf(t);
+  return (a && a.p3) ? a.p3.map(x => x.a).join('\n\n') : '';
+}
+
+function speakText(txt, depth){
+  if (!txt) return;
+  depth = depth || 0;
+  stopAll();
+  cancelled = false;                 // stopAll 会把 cancelled 置 true，这里必须放开
+  try { speechSynthesis.cancel(); } catch(e){}
+  setStatus('正在朗读…', true);
+
+  // 这个音色不出声 → 换本地音色重试（最多 2 次）
+  const retryWithLocal = reason => {
+    const alt = (depth < 2) ? findLocalVoice() : null;
+    if (!alt){
+      setStatus(reason + ' → 打开「语音诊断.html」查一下（音色不可用 / 系统静音 / 预览窗口）');
+      return;
+    }
+    try { speechSynthesis.cancel(); } catch(e){}
+    switchVoiceTo(alt);
+    setStatus(reason + ' → 已自动换成「' + (alt.name || '本地音色') + '」重试');
+    setTimeout(() => { if (!cancelled) speakText(txt, depth + 1); }, 180);
+  };
+
+  // cancel 与 speak 之间要让出一小段时间，否则取消动作会把 speak 一起吞掉
+  setTimeout(() => {
+    if (cancelled) return;
+    let u, started = false;
+    try {
+      u = new SpeechSynthesisUtterance(txt);
+      if (curVoice) u.voice = curVoice;
+      u.lang = curVoice ? curVoice.lang : 'en-US';
+      u.rate = parseFloat(rateEl.value) || 0.95; u.pitch = 1;
+      qUtt = u;                        // Safari 需强引用保活
+      const gid = ++ttsGid; curGid = gid;
+      u.onstart = () => {
+        if (gid !== curGid) return;
+        started = true; clearTimeout(speakTimer); speakTimer = null;
+      };
+      u.onend = () => {
+        if (gid !== curGid) return;
+        curGid = 0; qUtt = null;
+        clearTimeout(speakTimer); speakTimer = null; setStatus('朗读完毕');
+      };
+      u.onerror = ev => {
+        if (gid !== curGid) return;
+        curGid = 0; qUtt = null; clearTimeout(speakTimer); speakTimer = null;
+        const err = (ev && ev.error) || '';
+        if (err === 'not-allowed'){
+          setStatus('浏览器拦住了语音：先点一下页面空白处，再点「试听」');
+          return;
+        }
+        retryWithLocal('这个音色发不出声' + (err ? '（' + err + '）' : ''));
+      };
+      speechSynthesis.speak(u);
+    } catch(e){
+      setStatus('朗读失败：' + e.message);
+      return;
+    }
+    setTimeout(() => {
+      if (!cancelled && !started) setStatus('正在连接语音服务…（在线音色首句可能要 1~2 秒）', true);
+    }, 1300);
+
+    // 无声自检：同上，只确认「真没开始读」才重试，且给足 8 秒
+    clearTimeout(speakTimer);
+    speakTimer = setTimeout(() => {
+      speakTimer = null;
+      const st = ttsState();
+      if (!shouldRetryNoSound({
+        speaking: st.speaking, pending: st.pending,
+        uttStarted: started, cancelled: cancelled, paused: false
+      })) return;
+      retryWithLocal('确认没出声');
+    }, 8000);
+  }, 90);
+}
+
+function zhLine(en, zh){
+  const row = document.createElement('div'); row.className = 'zhline';
+  const e = document.createElement('div'); e.className = 'zl-en'; e.textContent = en;
+  row.appendChild(e);
+  if (zh && zhOn){
+    const z = document.createElement('div'); z.className = 'zl-zh'; z.textContent = zh;
+    row.appendChild(z);
+  }
+  return row;
+}
+
+function ansRow(qtext, atext, prefix, zh){
+  const row = document.createElement('div'); row.className = 'ar';
+  const q = document.createElement('div'); q.className = 'aq';
+  const pv = document.createElement('button'); pv.className = 'pv'; pv.textContent = '▶';
+  pv.title = '只听这一句';
+  pv.onclick = ev => { ev.stopPropagation(); speakText(atext); };
+  const qt = document.createElement('span'); qt.textContent = prefix ? prefix + qtext : qtext;
+  q.appendChild(pv); q.appendChild(qt);
+  const an = document.createElement('div'); an.className = 'aa'; an.textContent = atext;
+  row.appendChild(q); row.appendChild(an);
+  if (zh && zhOn){
+    const z = document.createElement('div'); z.className = 'zl-zh'; z.textContent = zh;
+    row.appendChild(z);
+  }
+  return row;
+}
+
+function renderAns(t){
+  const a = ansOf(t);
+  ansBody.innerHTML = '';
+  ansMat.hidden = true;
+  ansP3Btn.hidden = true;
+  if (!a){
+    qAnsBtn.hidden = true;
+    updateZhBtn(t);
+    setAnsOpen(false);
+    return false;
+  }
+  qAnsBtn.hidden = false;
+  if (t.kind === 'p1'){
+    const zh = zhOf(t);
+    a.a.forEach((txt, i) => ansBody.appendChild(ansRow(a.q[i] || '', txt, '', zh ? zh[i] : '')));
+  } else {
+    if (a.mat){
+      ansMat.hidden = false;
+      ansMat.textContent = a.mat;
+      ansMat.title = a.mat;
+    }
+    const zhP = (ZH && ZH.p2) ? ZH.p2[t.cn] : null;
+    const sents = splitSent(a.text);
+    if (zhP && zhP.zh && zhP.zh.length === sents.length){
+      // 有译文：逐句排，中英一行对一行（跟读时能一句句对上）
+      sents.forEach((s, i) => ansBody.appendChild(zhLine(s, zhP.zh[i] || '')));
+    } else {
+      const p = document.createElement('div'); p.className = 'p2t'; p.textContent = a.text;
+      ansBody.appendChild(p);
+    }
+    if (a.p3 && a.p3.length){
+      ansP3Btn.hidden = false;
+      const zh3 = zhP && zhP.p3;
+      a.p3.forEach((it, i) => ansBody.appendChild(ansRow(it.q, it.a, 'P3 · ', zh3 ? zh3[i] : '')));
+    }
+  }
+  updateZhBtn(t);
+  return true;
+}
+
+function setAnsOpen(open){
+  qAns.hidden = !open;
+  qcard.classList.toggle('withans', !!open);
+  qAnsBtn.textContent = open ? '收起答案' : '参考答案';
+}
+
+function fillAnswers(txt, msg){
+  if (!txt){ setStatus('这个话题暂时还没有参考答案'); return; }
+  setAnsOpen(false);
+  src.value = txt;
+  updateSrcStat();
+  $('#btnParse').click();
+  setStatus(msg);
+}
+
+qAnsBtn.onclick = () => setAnsOpen(qAns.hidden);
+if (zhBtn) zhBtn.onclick = () => {
+  zhOn = !zhOn;
+  try { localStorage.setItem('ielts_zh', zhOn ? '1' : '0'); } catch(e){}
+  if (curTopic) renderAns(curTopic);
+  setStatus(zhOn ? '已显示中文对照 · 点「中文 ✓」可关掉' : '已隐藏中文对照');
+};
+ansFillBtn.onclick = () => { if (curTopic) fillAnswers(ansMainText(curTopic), '答案已填入，点「整篇播放」开始跟读'); };
+ansP3Btn.onclick = () => { if (curTopic) fillAnswers(ansP3Text(curTopic), 'P3 答案已填入'); };
+bankOnlyAns.onchange = renderBankList;
+
+btnBank.onclick = bankOpen;
+bankMask.onclick = bankClose;
+$('#bankClose').onclick = bankClose;
+$('#qClose').onclick = () => { qcard.hidden = true; };
+$('#qRead').onclick = readTopic;
+bankQEl.oninput = renderBankList;
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !bankDrawer.hidden) bankClose();
+});
+if (BANK){
+  btnBank.textContent = '📚 题库 ' + bankAll.length;
+  bankStatEl.textContent = bankAll.length + ' 个话题 · 2026 年 9-12 月';
+} else {
+  btnBank.textContent = '📚 题库（未加载）';
+  bankStatEl.textContent = '题库数据缺失';
+}
+if (ANS && ansCountEl){
+  ansCountEl.textContent = bankAll.filter(t => ansOf(t)).length;
+}
+
+/* ============ 初始化 ============ */
+if ('speechSynthesis' in window){
+  fillVoices();
+  speechSynthesis.onvoiceschanged = fillVoices;
+  setTimeout(fillVoices, 400);
+  if (NESTED) setStatus('提示：当前在预览窗口里，语音多半没声音 → 请用 Edge 直接打开本文件');
+} else {
+  voiceBadge.textContent = '浏览器不支持语音'; voiceBadge.className = 'badge bad';
+}
+
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder){
+  const isFile = location.protocol === 'file:';
+  if (window.isSecureContext){
+    if (isFile){
+      micBadge.textContent = '麦克风可用 · 每次要授权';
+      micBadge.className = 'badge';
+      micBadge.title = '双击打开（file://）时浏览器记不住授权，重开页面还会再问一次。'
+        + '用「启动本地服务.bat」打开（http://localhost）就会记住，只问一次。'
+        + '同一页面里连续录音不会再问。';
+    } else {
+      micBadge.textContent = '麦克风可用'; micBadge.className = 'badge ok';
+      micBadge.title = '第一次点「录音」弹一次权限框，点允许后整页都不再问。'
+        + '若每次都弹，去浏览器「设置 → 隐私 → 麦克风」把这个网址改成「允许」。';
+    }
+  } else {
+    micBadge.textContent = '需用本地服务打开'; micBadge.className = 'badge bad';
+    micBadge.title = '直接双击打开file://无法录音，请用 启动本地服务.bat';
+  }
+} else {
+  micBadge.textContent = '此环境不支持录音'; micBadge.className = 'badge bad';
+}
+
+render();
+updateSrcStat();
+
+/* 深链：串题地图.html 点卡名会带 #t=卡名 过来，自动选中这张卡并展开参考答案 */
+(function deepLink(){
+  const m = /[#&]t=([^&]+)/.exec(location.hash || '');
+  if (!m || !BANK) return;
+  let want = m[1];
+  try { want = decodeURIComponent(want); } catch(e){}
+  const t = bankAll.find(x => x.cn === want || x.en === want);
+  if (!t) return;
+  setTimeout(() => {
+    pickTopic(t);
+    const has = renderAns(t);
+    if (has) setAnsOpen(true);
+    const name = (t.kind === 'p1') ? t.en : t.cn;
+    setStatus(has
+      ? '已从串题地图定位：《' + name + '》→ 点「填入并跟读」开始'
+      : '已定位：《' + name + '》，这题还没有参考答案');
+  }, 250);
+})();
+</script>
+</body>
+</html>
