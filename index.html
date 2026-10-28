@@ -835,6 +835,10 @@ function scoreVoice(v){
 const BLOCK_RE = /eloquence|bad news|good news|bahh|bells|boing|bubbles|cellos|deranged|jester|organ|superstar|trinoids|wobble|zarvox|whisper|albert/i;
 // Safari 拿不到系统下载的高质量语音，音色天花板低，要提示换 Edge
 const IS_SAFARI = /^((?!chrome|android|crios|edg|fxios).)*safari/i.test(navigator.userAgent || '');
+// iOS / iPadOS 上所有浏览器（Chrome、Edge、Firefox）都是 WebKit 内核、共用系统语音库，
+// 换浏览器完全没用 —— 只能去系统设置里下载高清语音
+const IS_IOS = /iphone|ipad|ipod/i.test(navigator.userAgent || '')
+  || (/macintosh/i.test(navigator.userAgent || '') && (navigator.maxTouchPoints || 0) > 1);
 // 在软件自带预览窗口 / iframe 里，语音合成多半被静默拦截
 const NESTED = (() => { try { return window.self !== window.top; } catch(e){ return true; } })();
 let warmed = false;
@@ -854,11 +858,21 @@ function maybeWarmUp(){
 
 // 记住上一次选的音色：在线音色在某些网络下不出声，换过一次就不必每次重挑
 const VOICE_KEY = 'ielts.follow.voice';
-function saveVoice(v){ try { if (v && v.name) localStorage.setItem(VOICE_KEY, v.name); } catch(e){} }
+// iOS/macOS 的 voiceURI 和 name 不是一回事（com.apple.voice.compact.en-US.Samantha ↔ "Samantha"），
+// 只按 name 存会在手机上永远回落到默认音色 → 优先存 voiceURI，name 只是老数据的兼容回退
+function saveVoice(v){ try { if (v && (v.voiceURI || v.name)) localStorage.setItem(VOICE_KEY, v.voiceURI || v.name); } catch(e){} }
 function loadVoiceName(){ try { return localStorage.getItem(VOICE_KEY) || ''; } catch(e){ return ''; } }
+// 三级匹配：voiceURI → name → name 被包含（兼容 "Samantha (Enhanced)" 这类带后缀的）
+function matchVoice(want){
+  if (!want) return -1;
+  let k = voices.findIndex(v => v.voiceURI === want);
+  if (k < 0) k = voices.findIndex(v => v.name === want);
+  if (k < 0) k = voices.findIndex(v => v.name && String(want).indexOf(v.name) >= 0);
+  return k;
+}
 
 function fillVoices(){
-  const prevName = curVoice ? curVoice.name : null;
+  const prevName = curVoice ? (curVoice.voiceURI || curVoice.name) : null;
   const all = (speechSynthesis.getVoices() || []).filter(v => !BLOCK_RE.test(v.name || ''));
   const us = all.filter(v => /^en[-_]us/i.test(v.lang));
   const otherEn = all.filter(v => /^en/i.test(v.lang) && us.indexOf(v) === -1);
@@ -879,7 +893,7 @@ function fillVoices(){
   let idx = 0;                                  // 刷新时保留当前选中的音色
   const want = prevName || loadVoiceName();     // 其次用上次记住的音色
   if (want){
-    const k = voices.findIndex(v => v.name === want);
+    const k = matchVoice(want);
     if (k >= 0) idx = k;
   }
   voiceSel.selectedIndex = idx;
@@ -889,6 +903,16 @@ function fillVoices(){
     voiceBadge.textContent = '预览窗口 · 语音可能不出声';
     voiceBadge.className = 'badge bad';
     voiceBadge.title = '你现在是在嵌套窗口里。请用 Edge 直接打开「yasigendu.html」这个文件，语音才正常';
+  } else if (IS_IOS){
+    // 手机上换浏览器没用（全是 WebKit），高质量语音只能靠系统设置里下载
+    if (/enhanced|premium|natural|neural/i.test(n)){
+      voiceBadge.textContent = '高清语音'; voiceBadge.className = 'badge ok'; voiceBadge.title = '已用上系统里的高清语音，朗读效果最好';
+    } else {
+      voiceBadge.textContent = '手机端 · 音色一般';
+      voiceBadge.className = 'badge';
+      voiceBadge.title = '手机换哪个浏览器都一样（都是 WebKit + 同一个系统语音库）。'
+        + '想要更好听：设置 → 辅助功能 → 朗读内容 → 语音 → 英语（美国）→ 点 Ava / Samantha 等后面的云朵图标下载「增强 / 高级」版本，然后刷新本页。';
+    }
   } else if (IS_SAFARI){
     voiceBadge.textContent = '建议换 Edge 打开';
     voiceBadge.className = 'badge bad';
@@ -1414,7 +1438,7 @@ function scheduleNext(i, ms){
 function findLocalVoice(){
   const pool = voices.length ? voices : (speechSynthesis.getVoices() || []);
   const en = pool.filter(v => /^en/i.test(v.lang || ''));
-  const others = en.filter(v => !curVoice || v.name !== curVoice.name);
+  const others = en.filter(v => !curVoice || (v.voiceURI || v.name) !== (curVoice.voiceURI || curVoice.name));
   const local = others.find(v => !/online|natural|neural/i.test(v.name || ''));
   if (local) return local;
   // 这台机器可能一个本地音色都没有（全是在线神经语音），那就换一个美式在线音色碰碰运气
@@ -1424,7 +1448,7 @@ function findLocalVoice(){
 function switchVoiceTo(v){
   curVoice = v;
   saveVoice(v);
-  const k = voices.findIndex(x => x.name === v.name);
+  const k = voices.findIndex(x => (x.voiceURI || x.name) === (v.voiceURI || v.name));
   if (k >= 0) voiceSel.selectedIndex = k;
   const n = (v.name || '').toLowerCase();
   if (/natural|neural|online|enhanced|premium/.test(n)){
